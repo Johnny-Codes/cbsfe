@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
 
 const NavBar = () => {
   return (

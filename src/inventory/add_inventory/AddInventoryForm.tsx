@@ -61,102 +61,105 @@ const AddInventoryForm = () => {
   return (
     <div className="">
       <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-        <InputField
-          register={register}
-          errors={errors}
-          name="is_bulk"
-          placeholder="Bulk"
-          type="checkbox"
-          onClick={() => setBulk(!bulk)}
-        />
-        {getSku ? (
-          <InputField
-            register={(...args) => {
-              const ref = register(...args);
-              setValue(args[0], getSku.random_sku);
-              return ref;
-            }}
-            errors={errors}
-            name="sku"
-            required={true}
-            placeholder="SKU"
-            type="text"
-            id="sku id"
-          />
-        ) : (
-          <input id="sku" placeholder="Sku Loading" />
-        )}
-        <InputField
-          register={register}
-          errors={errors}
-          name="pcgs_number"
-          placeholder="PCGS Number"
-          required={false}
-          type="text"
-        />
-        <InputField
-          register={register}
-          errors={errors}
-          name="title"
-          placeholder="Title"
-          required={true}
-          type="text"
-        />
-        <InputField
-          register={register}
-          errors={errors}
-          name="year"
-          placeholder="Year"
-          required={true}
-          type="number"
-        />
-        {bulk && (
-          <InputField
-            register={register}
-            errors={errors}
-            name="year2"
-            placeholder="Year 2"
-            required={bulk ? true : false}
-            type="number"
-          />
-        )}
         <div className="md:grid grid-cols-2 sm:flex">
-          <div className="grid">
-            {getMints &&
-              getMints.map((mint) => (
-                <InputField
-                  register={register}
-                  errors={errors}
-                  name={`mints.${mint.id}`}
-                  placeholder={mint.coin_mint}
-                  required={false}
-                  type="checkbox"
-                  key={mint.id}
-                  id={mint.id}
-                />
-              ))}
+          <div className="md:grid sm:flex sm:flex-wrap">
+            <InputField
+              register={register}
+              errors={errors}
+              name="is_bulk"
+              placeholder="Bulk"
+              type="checkbox"
+              onClick={() => setBulk(!bulk)}
+            />
+            {getSku ? (
+              <InputField
+                register={(...args) => {
+                  const ref = register(...args);
+                  setValue(args[0], getSku.random_sku);
+                  return ref;
+                }}
+                errors={errors}
+                name="sku"
+                required={true}
+                placeholder="SKU"
+                type="text"
+                id="sku id"
+              />
+            ) : (
+              <input id="sku" placeholder="Sku Loading" />
+            )}
+            <InputField
+              register={register}
+              errors={errors}
+              name="pcgs_number"
+              placeholder="PCGS Number"
+              required={false}
+              type="text"
+            />
+            <InputField
+              register={register}
+              errors={errors}
+              name="title"
+              placeholder="Title"
+              required={true}
+              type="text"
+            />
+            <InputField
+              register={register}
+              errors={errors}
+              name="year"
+              placeholder="Year"
+              required={true}
+              type="number"
+            />
+            {bulk && (
+              <InputField
+                register={register}
+                errors={errors}
+                name="year2"
+                placeholder="Year 2"
+                required={bulk ? true : false}
+                type="number"
+              />
+            )}
           </div>
-          <div className="grid">
-            <h1>
-              left off with denominations and it needs to be a dropdown anyway
-              so gotta make that component
-            </h1>
-            {getMints &&
-              getMints.map((mint) => (
-                <InputField
-                  register={register}
-                  errors={errors}
-                  name={`mints.${mint.id}`}
-                  placeholder={mint.coin_mint}
-                  required={false}
-                  type="checkbox"
-                  key={mint.id}
-                  id={mint.id}
-                />
-              ))}
+          <div className="md:grid grid-cols-2 sm:flex">
+            <div className="grid">
+              {getMints &&
+                getMints.map((mint) => (
+                  <InputField
+                    register={register}
+                    errors={errors}
+                    name={`mints.${mint.id}`}
+                    placeholder={mint.coin_mint}
+                    required={false}
+                    type="checkbox"
+                    key={mint.id}
+                    id={mint.id}
+                  />
+                ))}
+            </div>
+            <div className="grid">
+              <h1>
+                left off with denominations and it needs to be a dropdown anyway
+                so gotta make that component
+              </h1>
+              {getMints &&
+                getMints.map((mint) => (
+                  <InputField
+                    register={register}
+                    errors={errors}
+                    name={`mints.${mint.id}`}
+                    placeholder={mint.coin_mint}
+                    required={false}
+                    type="checkbox"
+                    key={mint.id}
+                    id={mint.id}
+                  />
+                ))}
+            </div>
           </div>
         </div>
-
         <TextAreaField
           register={register}
           errors={errors}

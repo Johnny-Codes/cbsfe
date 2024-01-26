@@ -14,7 +14,7 @@ const InputField = ({
   const capName = name.charAt(0).toUpperCase() + name.slice(1);
 
   return (
-    <>
+    <div>
       <span>
         <LabelForInput forInput={name} labelText={placeholder} />
         <input
@@ -28,7 +28,7 @@ const InputField = ({
         />
         {errors && errors[name] && <ErrorSpan title={capName} />}
       </span>
-    </>
+    </div>
   );
 };
 

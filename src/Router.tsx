@@ -1,13 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./nav/NavBar";
-import AddInventory from "./inventory/add_inventory/AddInventory";
+import AddInventoryForm from "./inventory/add_inventory/AddInventoryForm";
+
+import Test from "./Test";
 
 function Router() {
   return (
     <BrowserRouter>
       <NavBar />
-      <AddInventory />
-      <Routes>{/* <Route path="/" element={<NavBar />} /> */}</Routes>
+
+      <Routes>
+        {/* <Route path="/"} /> */}
+        <Route path="/test" element={<AddInventoryForm />} />
+      </Routes>
     </BrowserRouter>
   );
 }

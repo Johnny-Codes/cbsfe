@@ -61,8 +61,8 @@ const AddInventoryForm = () => {
   return (
     <div className="">
       <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-        <div className="md:grid grid-cols-2 sm:flex">
-          <div className="md:grid sm:flex sm:flex-wrap">
+        <div className="md:grid grid-cols-3 sm:flex outline px-4 py-4  outline-red-500">
+          <div className="md:grid sm:flex sm:flex-wrap outline px-4 py-4  outline-blue-500">
             <InputField
               register={register}
               errors={errors}
@@ -123,8 +123,9 @@ const AddInventoryForm = () => {
               />
             )}
           </div>
-          <div className="md:grid grid-cols-2 sm:flex">
-            <div className="grid">
+          <div className="md:grid grid-cols-2 sm:flex px-4 py-4 outline outline-green-500">
+            <div className="md: grid sm:flex sm:flex-wrap">
+              <p className="text-lg font-bold px-2">Mints:</p>
               {getMints &&
                 getMints.map((mint) => (
                   <InputField
@@ -139,27 +140,15 @@ const AddInventoryForm = () => {
                   />
                 ))}
             </div>
-            <div className="grid">
-              <h1>
-                left off with denominations and it needs to be a dropdown anyway
-                so gotta make that component
-              </h1>
-              {getMints &&
-                getMints.map((mint) => (
-                  <InputField
-                    register={register}
-                    errors={errors}
-                    name={`mints.${mint.id}`}
-                    placeholder={mint.coin_mint}
-                    required={false}
-                    type="checkbox"
-                    key={mint.id}
-                    id={mint.id}
-                  />
-                ))}
+            <div>
+              <p>more check boxes here</p>
             </div>
           </div>
+          <div className="grid px-4 py-4 outline outline-cyan-500">
+            <h1>all the drop down stuff here</h1>
+          </div>
         </div>
+
         <TextAreaField
           register={register}
           errors={errors}

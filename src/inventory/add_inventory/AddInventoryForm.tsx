@@ -7,7 +7,7 @@ import { useGetSkuQuery, useGetMintsQuery } from "../queries/coinApi";
 //Components
 import SubmitButton from "../../components/buttons/SubmitButton";
 import InputField from "../../components/forms/InputField";
-import LabelForInput from "../../components/forms/LabelForInput";
+import TextAreaField from "../../components/forms/TextAreaField";
 
 type Inputs = {
   is_deleted: boolean;
@@ -120,21 +120,50 @@ const AddInventoryForm = () => {
             type="number"
           />
         )}
-        <div className="grid">
-          {getMints &&
-            getMints.map((mint) => (
-              <InputField
-                register={register}
-                errors={errors}
-                name={`mints.${mint.id}`}
-                placeholder={mint.coin_mint}
-                required={false}
-                type="checkbox"
-                key={mint.id}
-                id={mint.id}
-              />
-            ))}
+        <div className="md:grid grid-cols-2 sm:flex">
+          <div className="grid">
+            {getMints &&
+              getMints.map((mint) => (
+                <InputField
+                  register={register}
+                  errors={errors}
+                  name={`mints.${mint.id}`}
+                  placeholder={mint.coin_mint}
+                  required={false}
+                  type="checkbox"
+                  key={mint.id}
+                  id={mint.id}
+                />
+              ))}
+          </div>
+          <div className="grid">
+            <h1>
+              left off with denominations and it needs to be a dropdown anyway
+              so gotta make that component
+            </h1>
+            {getMints &&
+              getMints.map((mint) => (
+                <InputField
+                  register={register}
+                  errors={errors}
+                  name={`mints.${mint.id}`}
+                  placeholder={mint.coin_mint}
+                  required={false}
+                  type="checkbox"
+                  key={mint.id}
+                  id={mint.id}
+                />
+              ))}
+          </div>
         </div>
+
+        <TextAreaField
+          register={register}
+          errors={errors}
+          name="description"
+          placeholder="Product Description"
+          required={false}
+        />
         <SubmitButton />
       </form>
     </div>

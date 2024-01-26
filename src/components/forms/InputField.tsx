@@ -4,7 +4,6 @@ import LabelForInput from "./LabelForInput";
 const InputField = ({
   register,
   name,
-  value,
   placeholder,
   required,
   errors,

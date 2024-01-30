@@ -10,6 +10,7 @@ const InputField = ({
   type,
   onClick,
   id,
+  valNum,
 }) => {
   const capName = name.charAt(0).toUpperCase() + name.slice(1);
 
@@ -22,7 +23,10 @@ const InputField = ({
           id={id && id}
           className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
           type={type}
-          {...register(name, { required: required })}
+          {...register(name, {
+            required: required,
+            ...(valNum && { valueAsNumber: true }),
+          })}
           placeholder={placeholder}
           onClick={onClick}
         />

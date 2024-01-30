@@ -26,16 +26,16 @@ type Inputs = {
   year2?: number;
   mint: object;
   description?: string;
-  family_of_coin: string;
-  denomination_of_coin: string;
-  coin_type: string;
+  family_of_coin: number;
+  denomination_of_coin: number;
+  coin_type: number;
   grading: string[];
   grade: string;
   grade2?: string;
   cost: number;
   quantity?: number;
   images?: HTMLImageElement; // <img> = HTMLImageElement, url = String, <input> File
-  strike: string;
+  strike: number;
 };
 
 const AddInventoryForm = () => {
@@ -68,25 +68,27 @@ const AddInventoryForm = () => {
   } = useGetCoinTypesQuery();
 
   // state
-  const [bulk, setBulk] = useState(false);
-  const [selectedFamily, setSelectedFamily] = useState(0);
+  const [bulk, setBulk] = useState<boolean>(false);
+  const [selectedFamily, setSelectedFamily] = useState<number>(0);
   const [denoms, setDenoms] = useState([]);
-  const [selectedDenom, setSelectedDenom] = useState(0);
+  const [selectedDenom, setSelectedDenom] = useState<number>(0);
   const [filteredCoinTypes, setFilteredCoinTypes] = useState([]);
+  const [selectedCoinType, setSelectedCoinType] = useState<number>(0);
 
   useEffect(() => {
-    const selectedFamilyNumber = Number(selectedFamily);
-    const selectedDenomNumber = Number(selectedDenom);
-
-    if ((selectedFamily === null) | (selectedFamily === 0)) {
+    if (selectedFamily === null || selectedFamily === 0) {
       setDenoms([]);
+      setSelectedDenom(0);
+    }
+
+    if (selectedDenom === null || selectedDenom === 0) {
       setFilteredCoinTypes([]);
     }
 
     // Filter denominations based on selected family
     if (getDenominations && selectedFamily !== null) {
       const filteredDenoms = getDenominations.filter(
-        (denomination) => denomination.family === selectedFamilyNumber
+        (denomination) => denomination.family === selectedFamily
       );
       setDenoms(filteredDenoms);
     } else {
@@ -95,20 +97,24 @@ const AddInventoryForm = () => {
 
     // Filter coin types based on selected denomination
     if (getCoinTypes && selectedDenom !== null) {
-      const filteredCoinTypes = getCoinTypes.filter(
-        (coinType) => coinType.denominations === selectedDenomNumber
+      const filteredCoinTypesResult = getCoinTypes.filter(
+        (coinType) => coinType.denominations === selectedDenom
       );
 
-      setFilteredCoinTypes(filteredCoinTypes);
+      setFilteredCoinTypes(filteredCoinTypesResult);
     }
   }, [selectedFamily, selectedDenom, getDenominations, getCoinTypes]);
 
   const handleSelectedFamily = (event) => {
-    setSelectedFamily(event.target.value);
+    setSelectedFamily(Number(event.target.value));
   };
 
   const handleSelectedDenom = (event) => {
-    setSelectedDenom(event.target.value);
+    setSelectedDenom(Number(event.target.value));
+  };
+
+  const handleSelectedCoinType = (event) => {
+    setSelectedCoinType(Number(event.target.value));
   };
 
   // react form hooks set up
@@ -120,10 +126,17 @@ const AddInventoryForm = () => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const watchedMints = watch("mints");
 
-  console.log("selected denom", selectedDenom);
-  console.log("ffiltered coin types", filteredCoinTypes);
+  // const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit = (data) => {
+    const checkedMints = Object.keys(watchedMints).filter(
+      (id) => watchedMints[id]
+    );
+    console.log(checkedMints);
+    data["mints"] = checkedMints;
+    console.log(data);
+  };
 
   return (
     <div className="">
@@ -178,6 +191,7 @@ const AddInventoryForm = () => {
               placeholder="Year"
               required={true}
               type="number"
+              valNum={true}
             />
             {bulk && (
               <InputField
@@ -187,6 +201,7 @@ const AddInventoryForm = () => {
                 placeholder="Year 2"
                 required={bulk ? true : false}
                 type="number"
+                valNum={true}
               />
             )}
           </div>
@@ -214,7 +229,7 @@ const AddInventoryForm = () => {
             <select
               name="family_of_coin"
               className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-              {...register("family_of_coin")}
+              {...register("family_of_coin", { valueAsNumber: true })}
               required
               onChange={(e) => handleSelectedFamily(e)}
             >
@@ -229,11 +244,11 @@ const AddInventoryForm = () => {
             <select
               name="denomination_of_coin"
               className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-              {...register("denomination_of_coin")}
+              {...register("denomination_of_coin", { valueAsNumber: true })}
               required
               onChange={(e) => handleSelectedDenom(e)}
             >
-              <option>Select Denomination</option>
+              <option value="0">Select Denomination</option>
               {denoms &&
                 denoms.map((d) => (
                   <option key={d.id} value={d.id}>
@@ -244,10 +259,11 @@ const AddInventoryForm = () => {
             <select
               name="coin_type"
               className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-              {...register("coin_type")}
+              {...register("coin_type", { valueAsNumber: true })}
+              onChange={(e) => handleSelectedCoinType(e)}
               required
             >
-              <option>Select Coin Type</option>
+              <option value="0">Select Coin Type</option>
               {filteredCoinTypes &&
                 filteredCoinTypes.map((c) => (
                   <option key={c.id} value={c.id}>

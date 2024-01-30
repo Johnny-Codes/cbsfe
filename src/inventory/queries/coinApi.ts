@@ -13,7 +13,23 @@ export const coinApi = createApi({
     getMints: builder.query({
       query: () => "coins/mints/",
     }),
+    getFamily: builder.query({
+      query: () => "coins/family/",
+    }),
+    getDenomination: builder.query({
+      query: () => "coins/denominations/",
+    }),
+    getCoinTypes: builder.query({
+      query: () => "coins/cointypes/",
+    }),
   }),
 });
 
-export const { useGetCoinQuery, useGetSkuQuery, useGetMintsQuery } = coinApi;
+export const {
+  useGetCoinQuery,
+  useGetSkuQuery,
+  useGetMintsQuery,
+  useGetFamilyQuery,
+  useGetDenominationQuery,
+  useGetCoinTypesQuery,
+} = coinApi;

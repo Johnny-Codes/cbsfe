@@ -9,6 +9,7 @@ import {
   useGetDenominationQuery,
   useGetCoinTypesQuery,
   useGetGradingCompaniesQuery,
+  useGetCoinGradesQuery,
 } from "../queries/coinApi";
 
 //Components
@@ -72,6 +73,11 @@ const AddInventoryForm = () => {
     error: gradingCompaniesError,
     isLoading: gradingCompaniesLoading,
   } = useGetGradingCompaniesQuery();
+  const {
+    data: getCoinGrades,
+    error: coinGradesError,
+    isLoading: coinGradesLoading,
+  } = useGetCoinGradesQuery();
 
   // state
   const [bulk, setBulk] = useState<boolean>(false);
@@ -138,7 +144,6 @@ const AddInventoryForm = () => {
     const checkedGradingCompanies = Object.keys(watchedGradingCompanies).filter(
       (id) => watchedGradingCompanies[id]
     );
-    console.log(checkedMints);
     data["mints"] = checkedMints;
     data["grading"] = checkedGradingCompanies;
     console.log(data);
@@ -228,18 +233,56 @@ const AddInventoryForm = () => {
                 ))}
             </div>
             <div>
-              {getGradingCompanies && getGradingCompanies.map((grading) =>(
-                <InputField
-                register={register}
-                errors={errors}
-                name={`grading.${grading.id}`}
-                type="checkbox"
-                placeholder={grading.name}
-                required={false}
-                key={grading.id}
-                id={grading.id}
-              />)
-              )}
+              {getGradingCompanies &&
+                getGradingCompanies.map((grading) => (
+                  <InputField
+                    register={register}
+                    errors={errors}
+                    name={`grading.${grading.id}`}
+                    type="checkbox"
+                    placeholder={grading.name}
+                    required={false}
+                    key={grading.id}
+                    id={grading.id}
+                  />
+                ))}
+
+              <select
+                name="grade"
+                className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+                {...register("grade", { valueAsNumber: true })}
+                required
+              >
+                <option>Select Coin Grade</option>
+                {getCoinGrades &&
+                  getCoinGrades.map((coinGrade) => (
+                    <option
+                      key={coinGrade.id}
+                      id={coinGrade.id}
+                      value={coinGrade.id}
+                    >
+                      {coinGrade.grade}
+                    </option>
+                  ))}
+              </select>
+              {bulk && (<select
+                name="grade2"
+                className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+                {...register("grade2", { valueAsNumber: true })}
+                required
+              >
+                <option>Select Coin Grade 2</option>
+                {getCoinGrades &&
+                  getCoinGrades.map((coinGrade) => (
+                    <option
+                      key={coinGrade.id}
+                      id={coinGrade.id}
+                      value={coinGrade.id}
+                    >
+                      {coinGrade.grade}
+                    </option>
+                  ))}
+              </select>)}
             </div>
             <div>
               <p>more check boxes here</p>

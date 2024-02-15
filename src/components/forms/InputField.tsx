@@ -11,6 +11,8 @@ const InputField = ({
   onClick,
   id,
   valNum,
+  step,
+  value
 }) => {
   const capName = name.charAt(0).toUpperCase() + name.slice(1);
 
@@ -19,7 +21,6 @@ const InputField = ({
       <span>
         <LabelForInput forInput={name} labelText={placeholder} />
         <input
-          // key={key_prop && key_prop}
           id={id && id}
           className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
           type={type}
@@ -29,6 +30,8 @@ const InputField = ({
           })}
           placeholder={placeholder}
           onClick={onClick}
+          step={step}
+          value={value}
         />
         {errors && errors[name] && <ErrorSpan title={capName} />}
       </span>

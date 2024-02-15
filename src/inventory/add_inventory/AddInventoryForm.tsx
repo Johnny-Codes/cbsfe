@@ -8,6 +8,7 @@ import {
   useGetFamilyQuery,
   useGetDenominationQuery,
   useGetCoinTypesQuery,
+  useGetGradingCompaniesQuery,
 } from "../queries/coinApi";
 
 //Components
@@ -29,7 +30,7 @@ type Inputs = {
   family_of_coin: number;
   denomination_of_coin: number;
   coin_type: number;
-  grading: string[];
+  grading: number[];
   grade: string;
   grade2?: string;
   cost: number;
@@ -66,6 +67,11 @@ const AddInventoryForm = () => {
     error: coinTypesError,
     isLoading: coinTypesLoading,
   } = useGetCoinTypesQuery();
+  const {
+    data: getGradingCompanies,
+    error: gradingCompaniesError,
+    isLoading: gradingCompaniesLoading,
+  } = useGetGradingCompaniesQuery();
 
   // state
   const [bulk, setBulk] = useState<boolean>(false);
@@ -85,7 +91,6 @@ const AddInventoryForm = () => {
       setFilteredCoinTypes([]);
     }
 
-    // Filter denominations based on selected family
     if (getDenominations && selectedFamily !== null) {
       const filteredDenoms = getDenominations.filter(
         (denomination) => denomination.family === selectedFamily
@@ -95,7 +100,6 @@ const AddInventoryForm = () => {
       setDenoms(getDenominations || []);
     }
 
-    // Filter coin types based on selected denomination
     if (getCoinTypes && selectedDenom !== null) {
       const filteredCoinTypesResult = getCoinTypes.filter(
         (coinType) => coinType.denominations === selectedDenom
@@ -117,7 +121,6 @@ const AddInventoryForm = () => {
     setSelectedCoinType(Number(event.target.value));
   };
 
-  // react form hooks set up
   const {
     register,
     handleSubmit,
@@ -127,14 +130,17 @@ const AddInventoryForm = () => {
   } = useForm<Inputs>();
 
   const watchedMints = watch("mints");
-
-  // const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const watchedGradingCompanies = watch("grading");
   const onSubmit = (data) => {
     const checkedMints = Object.keys(watchedMints).filter(
       (id) => watchedMints[id]
     );
+    const checkedGradingCompanies = Object.keys(watchedGradingCompanies).filter(
+      (id) => watchedGradingCompanies[id]
+    );
     console.log(checkedMints);
     data["mints"] = checkedMints;
+    data["grading"] = checkedGradingCompanies;
     console.log(data);
   };
 
@@ -220,6 +226,20 @@ const AddInventoryForm = () => {
                     id={mint.id}
                   />
                 ))}
+            </div>
+            <div>
+              {getGradingCompanies && getGradingCompanies.map((grading) =>(
+                <InputField
+                register={register}
+                errors={errors}
+                name={`grading.${grading.id}`}
+                type="checkbox"
+                placeholder={grading.name}
+                required={false}
+                key={grading.id}
+                id={grading.id}
+              />)
+              )}
             </div>
             <div>
               <p>more check boxes here</p>

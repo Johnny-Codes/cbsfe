@@ -225,6 +225,16 @@ const AddInventoryForm = () => {
               step='0.01' 
               placeholder='Cost'
             />
+            <InputField
+              register={register}
+              errors={errors}
+              name="sale_price"
+              placeholder="Sale Price"
+              required={true}
+              type="number"
+              step='0.01' 
+              placeholder='Sale Price'
+            />
           </div>
           <div className="md:grid grid-cols-2 sm:flex px-4 py-4 outline outline-green-500">
             <div className="md: grid sm:flex sm:flex-col">

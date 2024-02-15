@@ -10,6 +10,7 @@ import {
   useGetCoinTypesQuery,
   useGetGradingCompaniesQuery,
   useGetCoinGradesQuery,
+  useGetCoinStrikesQuery,
 } from "../queries/coinApi";
 
 //Components
@@ -78,6 +79,12 @@ const AddInventoryForm = () => {
     error: coinGradesError,
     isLoading: coinGradesLoading,
   } = useGetCoinGradesQuery();
+  const {
+    data: getCoinStrikes,
+    error: coinStrikesError,
+    isLoading: coinStrikesLoading,
+  } = useGetCoinStrikesQuery();
+  
 
   // state
   const [bulk, setBulk] = useState<boolean>(false);
@@ -230,10 +237,18 @@ const AddInventoryForm = () => {
               errors={errors}
               name="sale_price"
               placeholder="Sale Price"
-              required={true}
               type="number"
               step='0.01' 
               placeholder='Sale Price'
+            />
+            <InputField
+              register={register}
+              errors={errors}
+              name="quantity"
+              placeholder="Quantity"
+              required={true}
+              type="number"
+              placeholder='Quantity'
             />
           </div>
           <div className="md:grid grid-cols-2 sm:flex px-4 py-4 outline outline-green-500">
@@ -304,9 +319,6 @@ const AddInventoryForm = () => {
                   ))}
               </select>)}
             </div>
-            <div>
-              <p>more check boxes here</p>
-            </div>
           </div>
           <div className="grid px-4 py-4 outline outline-cyan-500">
             <select
@@ -351,6 +363,20 @@ const AddInventoryForm = () => {
                 filteredCoinTypes.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.coin_type}
+                  </option>
+                ))}
+            </select>
+            <select
+              name="strike"
+              className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+              {...register("strike", { valueAsNumber: true })}
+              required
+            >
+              <option value="0">Select Coin Strike</option>
+              {getCoinStrikes &&
+                getCoinStrikes.map((strike) => (
+                  <option key={strike.id} value={strike.id}>
+                    {strike.strike}
                   </option>
                 ))}
             </select>

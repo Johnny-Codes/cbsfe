@@ -28,6 +28,9 @@ export const coinApi = createApi({
     getCoinGrades: builder.query({
       query: () => "coins/coingrades/",
     }),
+    getCoinStrikes: builder.query({
+      query: () => "coins/strike/",
+    }),
   }),
 });
 
@@ -40,4 +43,5 @@ export const {
   useGetCoinTypesQuery,
   useGetGradingCompaniesQuery,
   useGetCoinGradesQuery,
+  useGetCoinStrikesQuery,
 } = coinApi;

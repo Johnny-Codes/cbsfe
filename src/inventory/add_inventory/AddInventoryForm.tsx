@@ -163,8 +163,8 @@ const AddInventoryForm = () => {
   return (
     <div className="">
       <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-        <div className="md:grid grid-cols-3 sm:flex outline px-4 py-4  outline-red-500">
-          <div className="md:grid sm:flex sm:flex-wrap outline px-4 py-4  outline-blue-500">
+        <div className="md:grid grid-cols-3 sm:flex px-4 py-4">
+          <div className="md:grid sm:flex sm:flex-wrap px-4 py-4">
             <InputField
               register={register}
               errors={errors}
@@ -261,7 +261,7 @@ const AddInventoryForm = () => {
               placeholder='Quantity'
             />
           </div>
-          <div className="md:grid grid-cols-2 sm:flex px-4 py-4 outline outline-green-500">
+          <div className="md:grid grid-cols-2 sm:flex px-4 py-4">
             <div className="md: grid sm:flex sm:flex-col">
               {getMints &&
                 getMints.map((mint) => (
@@ -331,7 +331,7 @@ const AddInventoryForm = () => {
               </select>)}
             </div>
           </div>
-          <div className="grid px-4 py-4 outline outline-cyan-500">
+          <div className="grid px-4 py-4">
             <select
               name="family_of_coin"
               className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
@@ -393,14 +393,6 @@ const AddInventoryForm = () => {
             </select>
           </div>
         </div>
-
-        <TextAreaField
-          register={register}
-          errors={errors}
-          name="description"
-          placeholder="Product Description"
-          required={false}
-        />
         <SubmitButton />
       </form>
     </div>

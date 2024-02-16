@@ -8,9 +8,11 @@ function Router() {
   return (
     <BrowserRouter>
       <NavBar />
-
       <Routes>
-        {/* <Route path="/"} /> */}
+        <Route path="/coins">
+          <Route index element={<Test />} />
+          <Route path="add" element={<AddInventoryForm />} />
+        </Route>
         <Route path="/test" element={<AddInventoryForm />} />
       </Routes>
     </BrowserRouter>

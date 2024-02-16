@@ -31,6 +31,13 @@ export const coinApi = createApi({
     getCoinStrikes: builder.query({
       query: () => "coins/strike/",
     }),
+    addCoin: builder.mutation({
+      query: (data) => ({
+        url: "coins/",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -44,4 +51,5 @@ export const {
   useGetGradingCompaniesQuery,
   useGetCoinGradesQuery,
   useGetCoinStrikesQuery,
+  useAddCoinMutation,
 } = coinApi;

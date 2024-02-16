@@ -11,6 +11,7 @@ import {
   useGetGradingCompaniesQuery,
   useGetCoinGradesQuery,
   useGetCoinStrikesQuery,
+  useAddCoinMutation,
 } from "../queries/coinApi";
 
 //Components
@@ -27,7 +28,7 @@ type Inputs = {
   title: string;
   year: number;
   year2?: number;
-  mint: object;
+  mint: number[];
   description?: string;
   family_of_coin: number;
   denomination_of_coin: number;
@@ -84,7 +85,7 @@ const AddInventoryForm = () => {
     error: coinStrikesError,
     isLoading: coinStrikesLoading,
   } = useGetCoinStrikesQuery();
-  
+  const [addCoin] = useAddCoinMutation();
 
   // state
   const [bulk, setBulk] = useState<boolean>(false);
@@ -142,7 +143,7 @@ const AddInventoryForm = () => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const watchedMints = watch("mints");
+  const watchedMints = watch("mint");
   const watchedGradingCompanies = watch("grading");
   const onSubmit = (data) => {
     const checkedMints = Object.keys(watchedMints).filter(
@@ -151,9 +152,12 @@ const AddInventoryForm = () => {
     const checkedGradingCompanies = Object.keys(watchedGradingCompanies).filter(
       (id) => watchedGradingCompanies[id]
     );
-    data["mints"] = checkedMints;
+    data["mint"] = checkedMints;
     data["grading"] = checkedGradingCompanies;
-    console.log(data);
+    if (data.pcgs_number === '') {
+      data.pcgs_number = null;
+    }
+    addCoin(data);
   };
 
   return (
@@ -167,7 +171,8 @@ const AddInventoryForm = () => {
               name="pcgs_number"
               placeholder="PCGS Number"
               required={false}
-              type="text"
+              type="number"
+              valNum={true}
             />
             <InputField
               register={register}
@@ -203,9 +208,10 @@ const AddInventoryForm = () => {
               type="text"
             />
             <InputField
-              register={register}
+            register={register}
               errors={errors}
               name="year"
+              valNum={true}
               placeholder="Year"
               required={true}
               type="number"
@@ -213,9 +219,10 @@ const AddInventoryForm = () => {
             />
             {bulk && (
               <InputField
-                register={register}
-                errors={errors}
-                name="year2"
+              register={register}
+              errors={errors}
+              name="year2"
+              valNum={true}
                 placeholder="Year 2"
                 required={bulk ? true : false}
                 type="number"
@@ -223,8 +230,9 @@ const AddInventoryForm = () => {
               />
             )}
             <InputField
-              register={register}
+            register={register}
               errors={errors}
+              valNum={true}
               name="cost"
               placeholder="Cost"
               required={true}
@@ -234,6 +242,7 @@ const AddInventoryForm = () => {
             />
             <InputField
               register={register}
+              valNum={true}
               errors={errors}
               name="sale_price"
               placeholder="Sale Price"
@@ -242,7 +251,8 @@ const AddInventoryForm = () => {
               placeholder='Sale Price'
             />
             <InputField
-              register={register}
+            register={register}
+            valNum={true}
               errors={errors}
               name="quantity"
               placeholder="Quantity"
@@ -258,7 +268,8 @@ const AddInventoryForm = () => {
                   <InputField
                     register={register}
                     errors={errors}
-                    name={`mints.${mint.id}`}
+                    valNum={true}
+                    name={`mint.${mint.id}`}
                     placeholder={mint.coin_mint}
                     required={false}
                     type="checkbox"
@@ -383,13 +394,13 @@ const AddInventoryForm = () => {
           </div>
         </div>
 
-        {/* <TextAreaField
+        <TextAreaField
           register={register}
           errors={errors}
           name="description"
           placeholder="Product Description"
           required={false}
-        /> */}
+        />
         <SubmitButton />
       </form>
     </div>

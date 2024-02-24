@@ -8,7 +8,7 @@ import Test from "./Test";
 function Router() {
   return (
     <BrowserRouter>
-      <NavBar />
+      {location.pathname !== "/" && <NavBar />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/coins">

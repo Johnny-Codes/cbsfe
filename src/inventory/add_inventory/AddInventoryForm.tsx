@@ -292,7 +292,6 @@ const AddInventoryForm = () => {
                     id={grading.id}
                   />
                 ))}
-
               <select
                 name="grade"
                 className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"

@@ -1,13 +1,14 @@
 import { useRef, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { GiTwoCoins } from "react-icons/gi";
+import SubscriptionCard from "./SubscriptionCard";
 
 const HomePage = () => {
-    const comp = useRef(null)
+  const comp = useRef(null);
 
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
-      const t1 = gsap.timeline()
+      const t1 = gsap.timeline();
       t1.from("#intro-slider", {
         xPercent: "-100",
         duration: 1.3,
@@ -25,7 +26,7 @@ const HomePage = () => {
           stagger: 0.5,
         })
         .to("#intro-slider", {
-          xPercent: "-100",
+          xPercent: "100",
           duration: 1.3,
         })
         .from(["#tag-1", "#tag-2", "#tag-3", "#tag-4"], {
@@ -34,11 +35,11 @@ const HomePage = () => {
           duration: 1,
           delay: 0.3,
           stagger: 0.8,
-        })
-    }, comp)
+        });
+    }, comp);
 
-    return () => ctx.revert()
-  }, [])
+    return () => ctx.revert();
+  }, []);
 
   return (
     <>
@@ -58,17 +59,29 @@ const HomePage = () => {
           </h1>
         </div>
         <div className="text-gray-100 h-screen flex bg-gray-950 justify-center place-items-center flex-col">
-          <p className="text-3xl sm:text-5xl flex" id="tag-1"><GiTwoCoins />Embark on a Numismatic Journey...</p>
-          <p className="text-3xl sm:text-5xl flex mt-2 sm:mt-4" id="tag-2">...Discovering Treasures...</p>
-          <p className="text-3xl sm:text-5xl flex mt-2 sm:mt-4" id="tag-3">...Building a Collection...</p>
-          <p className="mt-4 sm:mt-10 text-5xl sm:text-8xl flex" id="tag-4">With The Coin Box Subscription</p>
+          <p className="text-3xl sm:text-5xl flex" id="tag-1">
+            <GiTwoCoins />
+            Embark on a Numismatic Journey...
+          </p>
+          <p className="text-3xl sm:text-5xl flex mt-2 sm:mt-4" id="tag-2">
+            ...Discovering Treasures...
+          </p>
+          <p className="text-3xl sm:text-5xl flex mt-2 sm:mt-4" id="tag-3">
+            ...Building a Collection...
+          </p>
+          <p className="mt-4 sm:mt-10 text-5xl sm:text-8xl flex" id="tag-4">
+            With The Coin Box Subscription
+          </p>
         </div>
       </div>
-      <div className="bg-gray-400 h-screen p-10 text-gray-200">
-        <h1>Whatever</h1>
+      <div className="bg-gray-950 min-h-screen p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12">
+        <h1 className="text-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-50">
+          Three Subscription Levels to Meet Your Collection Needs
+        </h1>
+        <SubscriptionCard />
       </div>
     </>
-  )
-}
+  );
+};
 
 export default HomePage;

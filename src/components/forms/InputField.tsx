@@ -1,7 +1,21 @@
 import ErrorSpan from "./ErrorSpan";
 import LabelForInput from "./LabelForInput";
 
-const InputField = ({
+interface InputFieldProps {
+  register: any; 
+  name: string;
+  placeholder: string;
+  required: boolean;
+  errors: any; 
+  type: string;
+  onClick?: () => void;
+  id?: string;
+  valNum?: boolean;
+  step?: number;
+  value?: string | number;
+}
+
+const InputField: React.FC<InputFieldProps> = ({
   register,
   name,
   placeholder,
@@ -40,16 +54,3 @@ const InputField = ({
 };
 
 export default InputField;
-
-{
-  /* 
-  <InputField
-          register={register}
-          errors={errors}
-          name="name"
-          placeholder="placeholder"
-          required={true or false}
-          type="text or number or checkbox"
-        /> 
-*/
-}

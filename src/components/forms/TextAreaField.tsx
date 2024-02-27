@@ -1,6 +1,16 @@
 import ErrorSpan from "./ErrorSpan";
 
-const TextAreaField = ({ register, errors, name, placeholder, required }) => {
+interface TextAreaFieldProps {
+  register: any;
+  name: string;
+  placeholder: string;
+  required: boolean;
+  errors: any;
+}
+
+const TextAreaField: React.FC<TextAreaFieldProps> = (
+  { register, errors, name, placeholder, required }) => {
+  const capName = name.charAt(0).toUpperCase() + name.slice(1);
   return (
     <>
       <textarea

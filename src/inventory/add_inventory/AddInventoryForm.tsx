@@ -173,26 +173,21 @@ const AddInventoryForm = () => {
   const getPcgsInfo = (event) => {
     event.preventDefault();
     const pcgs_no = event.target.pcgs_no.value;
-    console.log("event", pcgs_no);
     getPcgsCoinInfo({ pcgs_no });
   };
 
   useEffect(() => {
     if (pcgsData) {
-      console.log("pcgs data in useeffect", pcgsData);
-      console.log("pcgs number", typeof pcgsData);
       setValue("pcgs_number", pcgsData.pcgs_number);
       setValue("title", pcgsData.title);
       setValue("year", pcgsData.year);
       if (pcgsData.sku) {
         setValue("sku", pcgsData.sku);
-        console.log("There is a PCGS number");
       }
       setValue("sale_price", pcgsData.sale_price);
       setValue("quantity", 1)
       setValue("grade", pcgsData.grade);
       setValue("strike", pcgsData.strike);
-      console.log("grading companies", getGradingCompanies);
       getGradingCompanies.forEach(grading => {
         setValue(`grading.${grading.id}`, pcgsData.grading === grading.id);
       });
@@ -229,19 +224,19 @@ const AddInventoryForm = () => {
 
   return (
     <div className="">
-      <form onSubmit={getPcgsInfo} className="p-4">
+      <form onSubmit={getPcgsInfo} className="p-4 flex">
         <InputField
           register={register}
           errors={errors}
           name="pcgs_no"
-          placeholder="PCGS Number"
+          placeholder="PCGS Cert or Scan PCGS/NGC"
           required={false}
           type="number"
           valNum={true}
         />
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded m-4"
         >
           Get Info
         </button>

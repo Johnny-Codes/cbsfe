@@ -1,4 +1,4 @@
-function formatTime(dateTime) {
+function formatTime(dateTime: string | number | Date): string {
   const time = new Date(dateTime);
   const hour = time.getHours();
   const minute = time.getMinutes();

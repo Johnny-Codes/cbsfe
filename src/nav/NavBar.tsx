@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const node = useRef();
 
   const handleClick = e => {
     if (node.current.contains(e.target)) {
@@ -25,7 +24,7 @@ const NavBar = () => {
 
   return (
     <nav className="flex items-center justify-between bg-slate-500 p-6">
-      <div className="flex items-center text-white font-semibold text-xl tracking-tight space-x-4 relative" ref={node}>
+      <div className="flex items-center text-white font-semibold text-xl tracking-tight space-x-4 relative" >
           <NavLink to="/" onClick={() => setIsOpen(false)}>coINventory</NavLink>
           <div className="dropdown">
             <p onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">

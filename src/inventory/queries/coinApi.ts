@@ -43,7 +43,6 @@ export const coinApi = createApi({
     }),
     getPcgsCoinInfo: builder.mutation({
       query: (data) => {
-        console.log("data", data);
         return {
           url: "coins/pcgs_coin_data/",
           method: "POST",

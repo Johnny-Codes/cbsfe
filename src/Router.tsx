@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./nav/NavBar";
 import HomePage from "./homepage/HomePage";
-import AddInventoryForm from "./inventory/add_inventory/AddInventoryForm";
+import AddInventoryForm from "./inventory/AddInventoryForm";
+import InventoryPage from "./inventory/InventoryPage";
 
 import Test from "./Test";
 
@@ -13,6 +14,7 @@ function Router() {
         <Route path="/" element={<HomePage />} />
         <Route path="/coins">
           <Route index element={<Test />} />
+          <Route path="inventory" element={<InventoryPage />} />
           <Route path="add" element={<AddInventoryForm />} />
         </Route>
         <Route path="/test" element={<Test />} />

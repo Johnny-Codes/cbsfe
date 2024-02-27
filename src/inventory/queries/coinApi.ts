@@ -2,10 +2,13 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const coinApi = createApi({
   reducerPath: "coinApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BASE_URL }),
   endpoints: (builder) => ({
     getCoin: builder.query({
       query: (id) => `coins/${id}/`,
+    }),
+    getCoinsByType: builder.query({
+      query: (id) => `coins/cointypes/${id}/`,
     }),
     getSku: builder.query({
       query: () => "sku/random/",
@@ -66,6 +69,7 @@ export const coinApi = createApi({
 
 export const {
   useGetCoinQuery,
+  useGetCoinsByTypeQuery,
   useGetSkuQuery,
   useGetMintsQuery,
   useGetFamilyQuery,

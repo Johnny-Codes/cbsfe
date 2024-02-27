@@ -13,11 +13,11 @@ import {
   useGetCoinStrikesQuery,
   useAddCoinMutation,
   useGetPcgsCoinInfoMutation,
-} from "../queries/coinApi";
+} from "./queries/coinApi";
 
 //Components
-import SubmitButton from "../../components/buttons/SubmitButton";
-import InputField from "../../components/forms/InputField";
+import SubmitButton from "../components/buttons/SubmitButton";
+import InputField from "../components/forms/InputField";
 
 type Inputs = {
   is_deleted: boolean;

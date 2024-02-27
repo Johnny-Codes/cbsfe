@@ -97,6 +97,13 @@ const AddInventoryForm = () => {
   const [selectedDenom, setSelectedDenom] = useState<number>(0);
   const [filteredCoinTypes, setFilteredCoinTypes] = useState([]);
   const [selectedCoinType, setSelectedCoinType] = useState<number>(0);
+  const [sku, setSku] = useState<string>("");
+  // { getSku && setSku(getSku.random_sku) }
+  useEffect(() => {
+    if (getSku && getSku.random_sku) {
+      setSku(getSku.random_sku);
+    }
+  }, [getSku]);
 
   useEffect(() => {
     if (selectedFamily === null || selectedFamily === 0) {
@@ -162,6 +169,8 @@ const AddInventoryForm = () => {
       data.pcgs_number = null;
     }
     addCoin(data);
+    // had to setSku because setValue wasn't working in the useEffect of pcgsData
+    setSku(getSku.random_sku);
     reset();
   };
 
@@ -182,7 +191,7 @@ const AddInventoryForm = () => {
       setValue("title", pcgsData.title);
       setValue("year", pcgsData.year);
       if (pcgsData.sku) {
-        setValue("sku", pcgsData.sku);
+        setSku(pcgsData.sku);
       }
       setValue("sale_price", pcgsData.sale_price);
       setValue("quantity", 1)
@@ -218,13 +227,15 @@ const AddInventoryForm = () => {
     if (pcgsDataError) {
       console.error("Failed to fetch PCGS info", pcgsDataError);
     }
-  }, [pcgsData, pcgsDataError, setValue, selectedFamily, selectedDenom]);
+  }, [pcgsData, pcgsDataError, setValue, selectedFamily, selectedDenom, setSku]);
 
 
 
   return (
-    <div className="">
-      <form onSubmit={getPcgsInfo} className="p-4 flex">
+<div className="max-w-4xl mx-auto">
+      {/* PCGS Info Form */}
+      <form onSubmit={getPcgsInfo} className="p-4 flex justify-between items-center space-x-4 bg-gray-100 rounded-md">
+        {/* PCGS Number Input */}
         <InputField
           register={register}
           errors={errors}
@@ -233,17 +244,39 @@ const AddInventoryForm = () => {
           required={false}
           type="number"
           valNum={true}
+          className="flex-grow"
         />
+        {/* Submit Button */}
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded m-4"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Get Info
         </button>
       </form>
-      <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-        <div className="md:grid grid-cols-3 sm:flex px-4 py-4">
-          <div className="md:grid sm:flex sm:flex-wrap px-4 py-4">
+
+      {/* Loading Indicator */}
+      {pcgsDataLoading && (
+        <div className="flex items-center justify-center space-x-2 bg-gray-100 p-4 rounded-md">
+          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p>Getting your coin information...</p>
+        </div>
+      )}
+      {/* Main Inventory Form */}
+      <form onSubmit={handleSubmit(onSubmit)} className="p-4 bg-gray-100 rounded-md">
+        {/* Grid Container */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <InputField
+            register={register}
+            errors={errors}
+            name="is_bulk"
+            placeholder="Bulk"
+            type="checkbox"
+            onClick={() => setBulk(!bulk)}
+          />
             <InputField
               register={register}
               errors={errors}
@@ -253,19 +286,11 @@ const AddInventoryForm = () => {
               type="number"
               valNum={true}
             />
-            <InputField
-              register={register}
-              errors={errors}
-              name="is_bulk"
-              placeholder="Bulk"
-              type="checkbox"
-              onClick={() => setBulk(!bulk)}
-            />
             {getSku ? (
               <InputField
                 register={(...args) => {
                   const ref = register(...args);
-                  setValue(args[0], getSku.random_sku);
+                  setValue(args[0], sku);
                   return ref;
                 }}
                 errors={errors}
@@ -472,7 +497,6 @@ const AddInventoryForm = () => {
                 ))}
             </select>
           </div>
-        </div>
         <SubmitButton />
       </form>
     </div>

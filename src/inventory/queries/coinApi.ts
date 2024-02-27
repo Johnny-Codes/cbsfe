@@ -32,15 +32,26 @@ export const coinApi = createApi({
       query: () => "coins/strike/",
     }),
     addCoin: builder.mutation({
-      query: (data) => {
-        console.log("submit data", data);
-        return {
-          url: "coins/",
-          method: "POST",
-          body: data,
-        };
-      },
+      query: (data) => ({
+        url: "coins/",
+        method: "POST",
+        body: data,
+      }),
+      // onError: (error, variables, context) => {
+      //   console.log("error", error);
+      //   // Check if the error response contains the sku error message
+      //   if (error.data && error.data.sku && Array.isArray(error.data.sku)) {
+      //     const errorMessage = error.data.sku[0]; // Extract the error message
+      //     // Handle the duplicate SKU error here, such as displaying a message to the user
+      //     console.error("Duplicate SKU error:", errorMessage);
+      //   } else {
+      //     // Handle other types of errors
+      //     console.error("An error occurred while adding coin:", error);
+      //   }
+      //   throw error; // Re-throw the error to propagate it to the component
+      // },
     }),
+    
     getPcgsCoinInfo: builder.mutation({
       query: (data) => {
         return {

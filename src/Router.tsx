@@ -13,7 +13,7 @@ function Router() {
           <Route index element={<Test />} />
           <Route path="add" element={<AddInventoryForm />} />
         </Route>
-        <Route path="/test" element={<AddInventoryForm />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 // api queries
 import {
@@ -12,6 +13,7 @@ import {
   useGetCoinGradesQuery,
   useGetCoinStrikesQuery,
   useAddCoinMutation,
+  useGetPcgsCoinInfoMutation,
 } from "../queries/coinApi";
 
 //Components
@@ -28,6 +30,7 @@ type Inputs = {
   title: string;
   year: number;
   year2?: number;
+  sale_price: number;
   mint: number[];
   description?: string;
   family_of_coin: number;
@@ -141,6 +144,7 @@ const AddInventoryForm = () => {
     setValue,
     watch,
     formState: { errors },
+    reset,
   } = useForm<Inputs>();
 
   const watchedMints = watch("mint");
@@ -154,14 +158,94 @@ const AddInventoryForm = () => {
     );
     data["mint"] = checkedMints;
     data["grading"] = checkedGradingCompanies;
-    if (data.pcgs_number === '') {
+    if (data.pcgs_number === "") {
       data.pcgs_number = null;
     }
     addCoin(data);
+    reset();
   };
+
+  const [
+    getPcgsCoinInfo,
+    { data: pcgsData, error: pcgsDataError, isLoading: pcgsDataLoading },
+  ] = useGetPcgsCoinInfoMutation();
+
+  const getPcgsInfo = (event) => {
+    event.preventDefault();
+    const pcgs_no = event.target.pcgs_no.value;
+    console.log("event", pcgs_no);
+    getPcgsCoinInfo({ pcgs_no });
+  };
+
+  useEffect(() => {
+    if (pcgsData) {
+      console.log("pcgs data in useeffect", pcgsData);
+      console.log("pcgs number", typeof pcgsData);
+      setValue("pcgs_number", pcgsData.pcgs_number);
+      setValue("title", pcgsData.title);
+      setValue("year", pcgsData.year);
+      if (pcgsData.sku) {
+        setValue("sku", pcgsData.sku);
+        console.log("There is a PCGS number");
+      }
+      setValue("sale_price", pcgsData.sale_price);
+      setValue("quantity", 1)
+      setValue("grade", pcgsData.grade);
+      setValue("strike", pcgsData.strike);
+      console.log("grading companies", getGradingCompanies);
+      getGradingCompanies.forEach(grading => {
+        setValue(`grading.${grading.id}`, pcgsData.grading === grading.id);
+      });
+      getMints.forEach(mint => {
+        setValue(`mint.${mint.id}`, pcgsData.mint === mint.id);
+      });
+      setValue("family_of_coin", pcgsData.family);
+      setSelectedFamily(pcgsData.family);
+      if (getDenominations && pcgsData.family !== null) {
+        const filteredDenoms = getDenominations.filter(
+          (denomination) => denomination.family === pcgsData.family
+        );
+        setDenoms(filteredDenoms);
+        setValue("denomination_of_coin", pcgsData.denomination);
+        setSelectedDenom(pcgsData.denomination);
+      } else {
+        setDenoms(getDenominations || []);
+      }
+    }
+    if (getCoinTypes && pcgsData &&pcgsData.denominations !== null && selectedFamily !== null) {
+      const filteredCoinTypesResult = getCoinTypes.filter(
+        (coinType) => coinType.denominations === pcgsData.denomination
+      );
+      setFilteredCoinTypes(filteredCoinTypesResult);
+      setValue("coin_type", pcgsData.coin_type);
+      setSelectedCoinType(pcgsData.coin_type);
+    }
+    if (pcgsDataError) {
+      console.error("Failed to fetch PCGS info", pcgsDataError);
+    }
+  }, [pcgsData, pcgsDataError, setValue, selectedFamily, selectedDenom]);
+
+
 
   return (
     <div className="">
+      <form onSubmit={getPcgsInfo} className="p-4">
+        <InputField
+          register={register}
+          errors={errors}
+          name="pcgs_no"
+          placeholder="PCGS Number"
+          required={false}
+          type="number"
+          valNum={true}
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Get Info
+        </button>
+      </form>
       <form onSubmit={handleSubmit(onSubmit)} className="p-4">
         <div className="md:grid grid-cols-3 sm:flex px-4 py-4">
           <div className="md:grid sm:flex sm:flex-wrap px-4 py-4">
@@ -208,21 +292,21 @@ const AddInventoryForm = () => {
               type="text"
             />
             <InputField
-            register={register}
+              register={register}
               errors={errors}
               name="year"
               valNum={true}
               placeholder="Year"
               required={true}
               type="number"
-              valNum={true} 
+              valNum={true}
             />
             {bulk && (
               <InputField
-              register={register}
-              errors={errors}
-              name="year2"
-              valNum={true}
+                register={register}
+                errors={errors}
+                name="year2"
+                valNum={true}
                 placeholder="Year 2"
                 required={bulk ? true : false}
                 type="number"
@@ -230,15 +314,15 @@ const AddInventoryForm = () => {
               />
             )}
             <InputField
-            register={register}
+              register={register}
               errors={errors}
               valNum={true}
               name="cost"
               placeholder="Cost"
               required={true}
               type="number"
-              step='0.01' 
-              placeholder='Cost'
+              step="0.01"
+              placeholder="Cost"
             />
             <InputField
               register={register}
@@ -247,18 +331,18 @@ const AddInventoryForm = () => {
               name="sale_price"
               placeholder="Sale Price"
               type="number"
-              step='0.01' 
-              placeholder='Sale Price'
+              step="0.01"
+              placeholder="Sale Price"
             />
             <InputField
-            register={register}
-            valNum={true}
+              register={register}
+              valNum={true}
               errors={errors}
               name="quantity"
               placeholder="Quantity"
               required={true}
               type="number"
-              placeholder='Quantity'
+              placeholder="Quantity"
             />
           </div>
           <div className="md:grid grid-cols-2 sm:flex px-4 py-4">
@@ -311,24 +395,26 @@ const AddInventoryForm = () => {
                     </option>
                   ))}
               </select>
-              {bulk && (<select
-                name="grade2"
-                className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-                {...register("grade2", { valueAsNumber: true })}
-                required
-              >
-                <option>Select Coin Grade 2</option>
-                {getCoinGrades &&
-                  getCoinGrades.map((coinGrade) => (
-                    <option
-                      key={coinGrade.id}
-                      id={coinGrade.id}
-                      value={coinGrade.id}
-                    >
-                      {coinGrade.grade}
-                    </option>
-                  ))}
-              </select>)}
+              {bulk && (
+                <select
+                  name="grade2"
+                  className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+                  {...register("grade2", { valueAsNumber: true })}
+                  required
+                >
+                  <option>Select Coin Grade 2</option>
+                  {getCoinGrades &&
+                    getCoinGrades.map((coinGrade) => (
+                      <option
+                        key={coinGrade.id}
+                        id={coinGrade.id}
+                        value={coinGrade.id}
+                      >
+                        {coinGrade.grade}
+                      </option>
+                    ))}
+                </select>
+              )}
             </div>
           </div>
           <div className="grid px-4 py-4">

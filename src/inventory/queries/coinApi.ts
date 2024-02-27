@@ -32,11 +32,24 @@ export const coinApi = createApi({
       query: () => "coins/strike/",
     }),
     addCoin: builder.mutation({
-      query: (data) => ({
-        url: "coins/",
-        method: "POST",
-        body: data,
-      }),
+      query: (data) => {
+        console.log("submit data", data);
+        return {
+          url: "coins/",
+          method: "POST",
+          body: data,
+        };
+      },
+    }),
+    getPcgsCoinInfo: builder.mutation({
+      query: (data) => {
+        console.log("data", data);
+        return {
+          url: "coins/pcgs_coin_data/",
+          method: "POST",
+          body: data,
+        };
+      },
     }),
   }),
 });
@@ -52,4 +65,5 @@ export const {
   useGetCoinGradesQuery,
   useGetCoinStrikesQuery,
   useAddCoinMutation,
+  useGetPcgsCoinInfoMutation,
 } = coinApi;

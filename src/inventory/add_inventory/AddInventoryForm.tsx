@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { skipToken } from "@reduxjs/toolkit/query";
 
 // api queries
 import {
@@ -19,8 +18,6 @@ import {
 //Components
 import SubmitButton from "../../components/buttons/SubmitButton";
 import InputField from "../../components/forms/InputField";
-import TextAreaField from "../../components/forms/TextAreaField";
-import SelectField from "../../components/forms/SelectField";
 
 type Inputs = {
   is_deleted: boolean;
@@ -181,10 +178,11 @@ const AddInventoryForm = () => {
       setValue("pcgs_number", pcgsData.pcgs_number);
       setValue("title", pcgsData.title);
       setValue("year", pcgsData.year);
+      setValue("sale_price", pcgsData.sale_price);
       if (pcgsData.sku) {
         setValue("sku", pcgsData.sku);
+        print("sku", pcgsData.sku);
       }
-      setValue("sale_price", pcgsData.sale_price);
       setValue("quantity", 1)
       setValue("grade", pcgsData.grade);
       setValue("strike", pcgsData.strike);
@@ -215,6 +213,7 @@ const AddInventoryForm = () => {
       setValue("coin_type", pcgsData.coin_type);
       setSelectedCoinType(pcgsData.coin_type);
     }
+    
     if (pcgsDataError) {
       console.error("Failed to fetch PCGS info", pcgsDataError);
     }
@@ -236,11 +235,12 @@ const AddInventoryForm = () => {
         />
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded m-4"
+          className="bg-slate-500 hover:bg-slate-700 text-white font-bold px-2 rounded m-4"
         >
           Get Info
         </button>
       </form>
+      {pcgsDataLoading && <p>Loading...</p>}
       <form onSubmit={handleSubmit(onSubmit)} className="p-4">
         <div className="md:grid grid-cols-3 sm:flex px-4 py-4">
           <div className="md:grid sm:flex sm:flex-wrap px-4 py-4">

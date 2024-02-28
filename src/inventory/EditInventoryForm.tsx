@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 
 // api queries
 import {
-  useGetCoinQuery,
+  
   useUpdateCoinMutation,
   useGetMintsQuery,
   useGetFamilyQuery,
@@ -45,7 +45,7 @@ type Inputs = {
 };
 
 const EditInventoryForm = (props: any) => {
-  const coinId = props.coinId;
+  const coinData = props.coinData;
   const navigate = useNavigate();
   
   const [updateCoin] = useUpdateCoinMutation();
@@ -57,12 +57,6 @@ const EditInventoryForm = (props: any) => {
   const [selectedDenom, setSelectedDenom] = useState<number>(0);
   const [filteredCoinTypes, setFilteredCoinTypes] = useState([]);
   const [selectedCoinType, setSelectedCoinType] = useState<number>(0);
-
-  const {
-    data: coinData,
-    isLoading: coinLoading,
-    error: coinError,
-  } = useGetCoinQuery(coinId);
 
   const {
     data: getMints,
@@ -151,13 +145,13 @@ const EditInventoryForm = (props: any) => {
     reset,
   } = useForm<Inputs>();
 
-  useEffect(() => {
-    if (!coinId) {
-      navigate("/coins/inventory", {
-        state: { coin_type: coinData.coin_type },
-      });
-    }
-  }, [coinId, navigate]);
+//   useEffect(() => {
+//     if (!coinData.id) {
+//       navigate("/coins/inventory", {
+//         state: { coin_type: coinData.coin_type },
+//       });
+//     }
+//   }, [coinData, navigate]);
 
   useEffect(() => {
     if (coinData) {
@@ -220,10 +214,6 @@ const EditInventoryForm = (props: any) => {
       }
     }
   }, [setValue, coinData]);
-
-  if (!coinId) {
-    return null;
-  }
 
   const watchedMints = watch("mint");
   const watchedGradingCompanies = watch("grading");

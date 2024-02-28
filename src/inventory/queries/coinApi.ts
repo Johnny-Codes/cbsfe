@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const coinApi = createApi({
   reducerPath: "coinApi",
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BASE_URL }),
-  tagTypes: ["Coins"],
+  tagTypes: ["Coins", "Images"],
   endpoints: (builder) => ({
     getCoin: builder.query({
       query: (id) => `coins/${id}/`,
@@ -64,6 +64,20 @@ export const coinApi = createApi({
         };
       },
     }),
+    uploadImages: builder.mutation({
+      query: (data) => {
+        return {
+          url: "images/",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["Images"],
+    }),
+    getImage: builder.query({
+      query: (id) => `images/${id}/`,
+      providesTags: ["Images"],
+    }),
   }),
 });
 
@@ -81,4 +95,6 @@ export const {
   useGetCoinStrikesQuery,
   useAddCoinMutation,
   useGetPcgsCoinInfoMutation,
+  useUploadImagesMutation,
+  useGetImageQuery,
 } = coinApi;

@@ -78,6 +78,13 @@ export const coinApi = createApi({
       query: (id) => `images/${id}/`,
       providesTags: ["Images"],
     }),
+    deleteImage: builder.mutation({
+      query: (id) => ({
+        url: `images/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Images"],
+    }),
   }),
 });
 
@@ -97,4 +104,5 @@ export const {
   useGetPcgsCoinInfoMutation,
   useUploadImagesMutation,
   useGetImageQuery,
+  useDeleteImageMutation,
 } = coinApi;

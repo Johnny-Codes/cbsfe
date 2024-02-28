@@ -15,8 +15,8 @@ const InventoryListByType = (props) => {
     setSortDirection(direction);
   };
 
-  let sortedData = [...props.coinData];
-  if (sortField !== null) {
+  let sortedData = Array.isArray(props.coinData) ? [...props.coinData] : [];
+  if (sortField !== null && sortedData.length > 0) {
     sortedData.sort((a, b) => {
       if (a[sortField] < b[sortField]) {
         return sortDirection === 'asc' ? -1 : 1;

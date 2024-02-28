@@ -236,7 +236,7 @@ const AddInventoryForm = () => {
       <form onSubmit={getPcgsInfo} className="p-4 flex justify-between items-center space-x-4 bg-gray-100 rounded-md">
         {/* PCGS Number Input */}
         <label htmlFor="pcgs_no">PCGS Number or Scan NGC/PCGS Label: </label>
-        <input className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300" type="number" placeholder="Scan or PCGS Number" id="pcgs_info" required={false} />
+        <input className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300" type="number" placeholder="Scan or PCGS Number" id="pcgs_no" required={false} />
         {/* Submit Button */}
         <button
           type="submit"

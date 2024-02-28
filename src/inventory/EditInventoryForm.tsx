@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 // api queries
@@ -44,10 +44,10 @@ type Inputs = {
   strike: number;
 };
 
-const EditInventoryForm = () => {
-  const location = useLocation();
+const EditInventoryForm = (props: any) => {
+  const coinId = props.coinId;
   const navigate = useNavigate();
-  const coinId = location.state ? location.state.id : null;
+  
   const [updateCoin] = useUpdateCoinMutation();
 
   // state
@@ -153,7 +153,9 @@ const EditInventoryForm = () => {
 
   useEffect(() => {
     if (!coinId) {
-      navigate("/coins/inventory", {state: {coin_type: coinData.coin_type}});
+      navigate("/coins/inventory", {
+        state: { coin_type: coinData.coin_type },
+      });
     }
   }, [coinId, navigate]);
 
@@ -175,14 +177,14 @@ const EditInventoryForm = () => {
           }
         });
       });
-      getMints.forEach(mint => {
+      getMints.forEach((mint) => {
         coinData.mint.forEach((m) => {
           if (mint.id === m[0].id) {
             setValue(`mint.${mint.id}`, true);
           }
         });
       });
-      
+
       getFamily.forEach((family) => {
         if (family.id === coinData.family_of_coin.id) {
           setSelectedFamily(family.id);
@@ -191,10 +193,10 @@ const EditInventoryForm = () => {
       });
 
       getDenominations.forEach((denom) => {
-          if (denom.id === coinData.denomination_of_coin) {
-            setSelectedDenom(denom.id);
-            setValue("denomination_of_coin", denom.id);
-          }
+        if (denom.id === coinData.denomination_of_coin) {
+          setSelectedDenom(denom.id);
+          setValue("denomination_of_coin", denom.id);
+        }
       });
 
       getCoinTypes.forEach((coinType) => {
@@ -213,11 +215,9 @@ const EditInventoryForm = () => {
         }
       });
 
-
       if (coinData.is_bulk) {
         //handle bulk coins here
       }
-      
     }
   }, [setValue, coinData]);
 
@@ -227,7 +227,7 @@ const EditInventoryForm = () => {
 
   const watchedMints = watch("mint");
   const watchedGradingCompanies = watch("grading");
-  
+
   const onSubmit = (data) => {
     const checkedMints = Object.keys(watchedMints).filter(
       (id) => watchedMints[id]
@@ -469,7 +469,15 @@ const EditInventoryForm = () => {
           </select>
         </div>
         <SubmitButton />
-        <button className="bg-gray-400 px-2 py m-2 rounded-lg text-white border border-gray-500 hover:cursor-pointer" type="button" onClick={() => navigate("/coins/inventory", {state: {coin_type: coinData.coin_type}})}>
+        <button
+          className="bg-gray-400 px-2 py m-2 rounded-lg text-white border border-gray-500 hover:cursor-pointer"
+          type="button"
+          onClick={() =>
+            navigate("/coins/inventory", {
+              state: { coin_type: coinData.coin_type },
+            })
+          }
+        >
           Cancel
         </button>
       </form>

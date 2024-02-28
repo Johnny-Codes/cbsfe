@@ -3,7 +3,7 @@ import NavBar from "./nav/NavBar";
 import HomePage from "./homepage/HomePage";
 import AddInventoryForm from "./inventory/AddInventoryForm";
 import InventoryPage from "./inventory/InventoryPage";
-import EditInventoryForm from "./inventory/EditInventoryForm";
+import EditInventoryPage from "./inventory/EditInventoryPage";
 
 import Test from "./Test";
 
@@ -17,7 +17,7 @@ function Router() {
           <Route index element={<Test />} />
           <Route path="inventory" element={<InventoryPage />} />
           <Route path="add" element={<AddInventoryForm />} />
-          <Route path="edit/:sku" element={<EditInventoryForm />} />
+          <Route path="edit/:sku" element={<EditInventoryPage />} />
         </Route>
         <Route path="/test" element={<Test />} />
       </Routes>

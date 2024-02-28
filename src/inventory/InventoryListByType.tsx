@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const InventoryListByType = (props) => {
-  console.log("inv list data", props.coinData);
+  const navigate = useNavigate();
 
   if (props.coinData && props.coinData.length === 0) {
     return (
@@ -59,9 +59,15 @@ const InventoryListByType = (props) => {
                   <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
                     {coin.quantity}
                   </td>
-                  <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
-                    <Link to={`/coins/add/${coin.sku}`}>Edit</Link>
-                  </td>
+                  <button
+                    onClick={() =>
+                      navigate(`/coins/edit/${coin.sku}`, {
+                        state: { id: coin.id },
+                      })
+                    }
+                  >
+                    Edit
+                  </button>
                 </tr>
               ))}
           </tbody>

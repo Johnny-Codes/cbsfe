@@ -95,7 +95,7 @@ const AddInventoryForm = () => {
   const [filteredCoinTypes, setFilteredCoinTypes] = useState([]);
   const [selectedCoinType, setSelectedCoinType] = useState<number>(0);
   const [sku, setSku] = useState<string>("");
-  // { getSku && setSku(getSku.random_sku) }
+
   useEffect(() => {
     if (getSku && getSku.random_sku) {
       setSku(getSku.random_sku);
@@ -213,7 +213,7 @@ const AddInventoryForm = () => {
         setDenoms(getDenominations || []);
       }
     }
-    if (getCoinTypes && pcgsData &&pcgsData.denominations !== null && selectedFamily !== null) {
+    if (getCoinTypes && pcgsData && pcgsData.denominations !== null && selectedFamily !== null) {
       const filteredCoinTypesResult = getCoinTypes.filter(
         (coinType) => coinType.denominations === pcgsData.denomination
       );
@@ -233,7 +233,7 @@ const AddInventoryForm = () => {
       {/* PCGS Info Form */}
       <form onSubmit={getPcgsInfo} className="p-4 flex justify-between items-center space-x-4 bg-gray-100 rounded-md">
         {/* PCGS Number Input */}
-        <InputField
+        {/* <InputField
           register={register}
           errors={errors}
           name="pcgs_no"
@@ -242,7 +242,8 @@ const AddInventoryForm = () => {
           type="number"
           valNum={true}
           className="flex-grow"
-        />
+        /> */}
+        <input type="number" placeholder="Hello" required={false} />
         {/* Submit Button */}
         <button
           type="submit"

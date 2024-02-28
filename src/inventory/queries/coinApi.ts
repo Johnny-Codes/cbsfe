@@ -7,6 +7,18 @@ export const coinApi = createApi({
     getCoin: builder.query({
       query: (id) => `coins/${id}/`,
     }),
+    updateCoin: builder.mutation({
+      query: (data) => {
+        console.log("id:", data.id);
+        console.log("data:", data.data);
+    
+        return {
+          url: `coins/${data.id}/`,
+          method: "PUT",
+          body: data.data,
+        };
+      },
+    }),
     getCoinsByType: builder.query({
       query: (id) => `coins/cointypes/${id}/`,
     }),
@@ -69,6 +81,7 @@ export const coinApi = createApi({
 
 export const {
   useGetCoinQuery,
+  useUpdateCoinMutation,
   useGetCoinsByTypeQuery,
   useGetSkuQuery,
   useGetMintsQuery,

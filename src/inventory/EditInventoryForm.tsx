@@ -240,8 +240,6 @@ const EditInventoryForm = () => {
     if (data.pcgs_number === "") {
       data.pcgs_number = null;
     }
-    console.log("submit data", data);
-    console.log("submit id", coinData.id);
     updateCoin({ id: coinData.id, data });
   };
 

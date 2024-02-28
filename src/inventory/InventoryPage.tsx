@@ -10,7 +10,6 @@ const InventoryPage = () => {
     isLoading: coinLoading,
     error: coinError,
   } = useGetCoinsByTypeQuery(selectedCoinType);
-  console.log("inv page data", selectedCoinType, coinData)
 
   return (
     <div className="grid grid-cols-12">

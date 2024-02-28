@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import {useNavigate} from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 // api queries
@@ -43,6 +44,7 @@ type Inputs = {
 };
 
 const AddInventoryForm = () => {
+  const navigate = useNavigate();
   // api queries
   const {
     data: getSku,
@@ -233,17 +235,8 @@ const AddInventoryForm = () => {
       {/* PCGS Info Form */}
       <form onSubmit={getPcgsInfo} className="p-4 flex justify-between items-center space-x-4 bg-gray-100 rounded-md">
         {/* PCGS Number Input */}
-        {/* <InputField
-          register={register}
-          errors={errors}
-          name="pcgs_no"
-          placeholder="PCGS Cert or Scan PCGS/NGC"
-          required={false}
-          type="number"
-          valNum={true}
-          className="flex-grow"
-        /> */}
-        <input type="number" placeholder="Hello" required={false} />
+        <label htmlFor="pcgs_no">PCGS Number or Scan NGC/PCGS Label: </label>
+        <input className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300" type="number" placeholder="Scan or PCGS Number" id="pcgs_info" required={false} />
         {/* Submit Button */}
         <button
           type="submit"
@@ -317,7 +310,6 @@ const AddInventoryForm = () => {
               placeholder="Year"
               required={true}
               type="number"
-              valNum={true}
             />
             {bulk && (
               <InputField
@@ -328,7 +320,6 @@ const AddInventoryForm = () => {
                 placeholder="Year 2"
                 required={bulk ? true : false}
                 type="number"
-                valNum={true}
               />
             )}
             <InputField
@@ -340,7 +331,6 @@ const AddInventoryForm = () => {
               required={true}
               type="number"
               step="0.01"
-              placeholder="Cost"
             />
             <InputField
               register={register}
@@ -350,7 +340,6 @@ const AddInventoryForm = () => {
               placeholder="Sale Price"
               type="number"
               step="0.01"
-              placeholder="Sale Price"
             />
             <InputField
               register={register}
@@ -360,7 +349,6 @@ const AddInventoryForm = () => {
               placeholder="Quantity"
               required={true}
               type="number"
-              placeholder="Quantity"
             />
           </div>
           <div className="md:grid grid-cols-2 sm:flex px-4 py-4">
@@ -496,6 +484,9 @@ const AddInventoryForm = () => {
             </select>
           </div>
         <SubmitButton />
+        <button className="bg-gray-400 px-2 py m-2 rounded-lg text-white border border-gray-500 hover:cursor-pointer" type="button" onClick={() => navigate("/coins/inventory")}>
+          Cancel
+        </button>
       </form>
     </div>
   );

@@ -153,7 +153,7 @@ const EditInventoryForm = () => {
 
   useEffect(() => {
     if (!coinId) {
-      navigate("/coins/inventory");
+      navigate("/coins/inventory", {state: {coin_type: coinData.coin_type}});
     }
   }, [coinId, navigate]);
 
@@ -469,6 +469,9 @@ const EditInventoryForm = () => {
           </select>
         </div>
         <SubmitButton />
+        <button className="bg-gray-400 px-2 py m-2 rounded-lg text-white border border-gray-500 hover:cursor-pointer" type="button" onClick={() => navigate("/coins/inventory", {state: {coin_type: coinData.coin_type}})}>
+          Cancel
+        </button>
       </form>
     </div>
   );

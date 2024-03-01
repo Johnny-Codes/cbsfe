@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 // api queries
@@ -87,7 +87,8 @@ const AddInventoryForm = () => {
     error: coinStrikesError,
     isLoading: coinStrikesLoading,
   } = useGetCoinStrikesQuery();
-  const [addCoin] = useAddCoinMutation();
+  const [addCoin, { error: addCoinError }] = useAddCoinMutation();
+  const [submitError, setSubmitError] = useState(null);
 
   // state
   const [bulk, setBulk] = useState<boolean>(false);
@@ -167,10 +168,15 @@ const AddInventoryForm = () => {
     if (data.pcgs_number === "") {
       data.pcgs_number = null;
     }
-    addCoin(data);
-    // had to setSku because setValue wasn't working in the useEffect of pcgsData
-    setSku(getSku.random_sku);
-    reset();
+
+    addCoin(data)
+      .unwrap()
+      .then(() => {
+        navigate("/coins/inventory");
+      })
+      .catch((error) => {
+        setSubmitError(error.data);
+      });
   };
 
   const [
@@ -193,13 +199,13 @@ const AddInventoryForm = () => {
         setSku(pcgsData.sku);
       }
       setValue("sale_price", pcgsData.sale_price);
-      setValue("quantity", 1)
+      setValue("quantity", 1);
       setValue("grade", pcgsData.grade);
       setValue("strike", pcgsData.strike);
-      getGradingCompanies.forEach(grading => {
+      getGradingCompanies.forEach((grading) => {
         setValue(`grading.${grading.id}`, pcgsData.grading === grading.id);
       });
-      getMints.forEach(mint => {
+      getMints.forEach((mint) => {
         setValue(`mint.${mint.id}`, pcgsData.mint === mint.id);
       });
       setValue("family_of_coin", pcgsData.family);
@@ -215,7 +221,12 @@ const AddInventoryForm = () => {
         setDenoms(getDenominations || []);
       }
     }
-    if (getCoinTypes && pcgsData && pcgsData.denominations !== null && selectedFamily !== null) {
+    if (
+      getCoinTypes &&
+      pcgsData &&
+      pcgsData.denominations !== null &&
+      selectedFamily !== null
+    ) {
       const filteredCoinTypesResult = getCoinTypes.filter(
         (coinType) => coinType.denominations === pcgsData.denomination
       );
@@ -226,17 +237,24 @@ const AddInventoryForm = () => {
     if (pcgsDataError) {
       console.error("Failed to fetch PCGS info", pcgsDataError);
     }
-  }, [pcgsData, pcgsDataError, setValue, selectedFamily, selectedDenom, setSku]);
-
-
+  }, [pcgsData, pcgsDataError, setValue, selectedFamily, selectedDenom, setSku, getCoinTypes, getGradingCompanies, getMints, getDenominations]);
 
   return (
-<div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       {/* PCGS Info Form */}
-      <form onSubmit={getPcgsInfo} className="p-4 flex justify-between items-center space-x-4 bg-gray-100 rounded-md">
+      <form
+        onSubmit={getPcgsInfo}
+        className="p-4 flex justify-between items-center space-x-4 bg-gray-100 rounded-md"
+      >
         {/* PCGS Number Input */}
         <label htmlFor="pcgs_no">PCGS Number or Scan NGC/PCGS Label: </label>
-        <input className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300" type="number" placeholder="Scan or PCGS Number" id="pcgs_no" required={false} />
+        <input
+          className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+          type="number"
+          placeholder="Scan or PCGS Number"
+          id="pcgs_no"
+          required={false}
+        />
         {/* Submit Button */}
         <button
           type="submit"
@@ -249,16 +267,46 @@ const AddInventoryForm = () => {
       {/* Loading Indicator */}
       {pcgsDataLoading && (
         <div className="flex items-center justify-center space-x-2 bg-gray-100 p-4 rounded-md">
-          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <svg
+            className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
           </svg>
           <p>Getting your coin information...</p>
         </div>
       )}
       {/* Main Inventory Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="p-4 bg-gray-100 rounded-md">
+      {submitError && (
+  <div className="bg-red-500 text-white text-2xl">
+    <h1 className="text-center p-4 rounded-md">
+      {submitError &&
+        Object.entries(submitError).map(([key, value]) => (
+          <p key={key}>{`${key}: ${value}`}</p>
+        ))}
+    </h1>
+  </div>
+)}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="p-4 bg-gray-100 rounded-md"
+      >
         {/* Grid Container */}
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <InputField
             register={register}
@@ -268,127 +316,146 @@ const AddInventoryForm = () => {
             type="checkbox"
             onClick={() => setBulk(!bulk)}
           />
+          <InputField
+            register={register}
+            errors={errors}
+            name="pcgs_number"
+            placeholder="PCGS Number"
+            required={false}
+            type="number"
+            valNum={true}
+          />
+          {getSku ? (
             <InputField
-              register={register}
+              register={(...args) => {
+                const ref = register(...args);
+                setValue(args[0], sku);
+                return ref;
+              }}
               errors={errors}
-              name="pcgs_number"
-              placeholder="PCGS Number"
-              required={false}
-              type="number"
-              valNum={true}
-            />
-            {getSku ? (
-              <InputField
-                register={(...args) => {
-                  const ref = register(...args);
-                  setValue(args[0], sku);
-                  return ref;
-                }}
-                errors={errors}
-                name="sku"
-                required={true}
-                placeholder="SKU"
-                type="text"
-                id="sku id"
-              />
-            ) : (
-              <input id="sku" placeholder="Sku Loading" />
-            )}
-            <InputField
-              register={register}
-              errors={errors}
-              name="title"
-              placeholder="Title"
+              name="sku"
               required={true}
+              placeholder="SKU"
               type="text"
+              id="sku id"
             />
+          ) : (
+            <input id="sku" placeholder="Sku Loading" />
+          )}
+          <InputField
+            register={register}
+            errors={errors}
+            name="title"
+            placeholder="Title"
+            required={true}
+            type="text"
+          />
+          <InputField
+            register={register}
+            errors={errors}
+            name="year"
+            valNum={true}
+            placeholder="Year"
+            required={true}
+            type="number"
+          />
+          {bulk && (
             <InputField
               register={register}
               errors={errors}
-              name="year"
+              name="year2"
               valNum={true}
-              placeholder="Year"
-              required={true}
+              placeholder="Year 2"
+              required={bulk ? true : false}
               type="number"
             />
-            {bulk && (
-              <InputField
-                register={register}
-                errors={errors}
-                name="year2"
-                valNum={true}
-                placeholder="Year 2"
-                required={bulk ? true : false}
-                type="number"
-              />
-            )}
-            <InputField
-              register={register}
-              errors={errors}
-              valNum={true}
-              name="cost"
-              placeholder="Cost"
-              required={true}
-              type="number"
-              step="0.01"
-            />
-            <InputField
-              register={register}
-              valNum={true}
-              errors={errors}
-              name="sale_price"
-              placeholder="Sale Price"
-              type="number"
-              step="0.01"
-            />
-            <InputField
-              register={register}
-              valNum={true}
-              errors={errors}
-              name="quantity"
-              placeholder="Quantity"
-              required={true}
-              type="number"
-            />
+          )}
+          <InputField
+            register={register}
+            errors={errors}
+            valNum={true}
+            name="cost"
+            placeholder="Cost"
+            required={true}
+            type="number"
+            step="0.01"
+          />
+          <InputField
+            register={register}
+            valNum={true}
+            errors={errors}
+            name="sale_price"
+            placeholder="Sale Price"
+            type="number"
+            step="0.01"
+          />
+          <InputField
+            register={register}
+            valNum={true}
+            errors={errors}
+            name="quantity"
+            placeholder="Quantity"
+            required={true}
+            type="number"
+          />
+        </div>
+        <div className="md:grid grid-cols-2 sm:flex px-4 py-4">
+          <div className="md: grid sm:flex sm:flex-col">
+            {getMints &&
+              getMints.map((mint) => (
+                <InputField
+                  register={register}
+                  errors={errors}
+                  valNum={true}
+                  name={`mint.${mint.id}`}
+                  placeholder={mint.coin_mint}
+                  required={false}
+                  type="checkbox"
+                  key={mint.id}
+                  id={mint.id}
+                />
+              ))}
           </div>
-          <div className="md:grid grid-cols-2 sm:flex px-4 py-4">
-            <div className="md: grid sm:flex sm:flex-col">
-              {getMints &&
-                getMints.map((mint) => (
-                  <InputField
-                    register={register}
-                    errors={errors}
-                    valNum={true}
-                    name={`mint.${mint.id}`}
-                    placeholder={mint.coin_mint}
-                    required={false}
-                    type="checkbox"
-                    key={mint.id}
-                    id={mint.id}
-                  />
+          <div>
+            {getGradingCompanies &&
+              getGradingCompanies.map((grading) => (
+                <InputField
+                  register={register}
+                  errors={errors}
+                  name={`grading.${grading.id}`}
+                  type="checkbox"
+                  placeholder={grading.name}
+                  required={false}
+                  key={grading.id}
+                  id={grading.id}
+                />
+              ))}
+            <select
+              name="grade"
+              className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+              {...register("grade", { valueAsNumber: true })}
+              required
+            >
+              <option>Select Coin Grade</option>
+              {getCoinGrades &&
+                getCoinGrades.map((coinGrade) => (
+                  <option
+                    key={coinGrade.id}
+                    id={coinGrade.id}
+                    value={coinGrade.id}
+                  >
+                    {coinGrade.grade}
+                  </option>
                 ))}
-            </div>
-            <div>
-              {getGradingCompanies &&
-                getGradingCompanies.map((grading) => (
-                  <InputField
-                    register={register}
-                    errors={errors}
-                    name={`grading.${grading.id}`}
-                    type="checkbox"
-                    placeholder={grading.name}
-                    required={false}
-                    key={grading.id}
-                    id={grading.id}
-                  />
-                ))}
+            </select>
+            {bulk && (
               <select
-                name="grade"
+                name="grade2"
                 className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-                {...register("grade", { valueAsNumber: true })}
+                {...register("grade2", { valueAsNumber: true })}
                 required
               >
-                <option>Select Coin Grade</option>
+                <option>Select Coin Grade 2</option>
                 {getCoinGrades &&
                   getCoinGrades.map((coinGrade) => (
                     <option
@@ -400,91 +467,76 @@ const AddInventoryForm = () => {
                     </option>
                   ))}
               </select>
-              {bulk && (
-                <select
-                  name="grade2"
-                  className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-                  {...register("grade2", { valueAsNumber: true })}
-                  required
-                >
-                  <option>Select Coin Grade 2</option>
-                  {getCoinGrades &&
-                    getCoinGrades.map((coinGrade) => (
-                      <option
-                        key={coinGrade.id}
-                        id={coinGrade.id}
-                        value={coinGrade.id}
-                      >
-                        {coinGrade.grade}
-                      </option>
-                    ))}
-                </select>
-              )}
-            </div>
+            )}
           </div>
-          <div className="grid px-4 py-4">
-            <select
-              name="family_of_coin"
-              className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-              {...register("family_of_coin", { valueAsNumber: true })}
-              required
-              onChange={(e) => handleSelectedFamily(e)}
-            >
-              <option>Select Family</option>
-              {getFamily &&
-                getFamily.map((family) => (
-                  <option key={family.id} id={family.id} value={family.id}>
-                    {family.type}
-                  </option>
-                ))}
-            </select>
-            <select
-              name="denomination_of_coin"
-              className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-              {...register("denomination_of_coin", { valueAsNumber: true })}
-              required
-              onChange={(e) => handleSelectedDenom(e)}
-            >
-              <option value="0">Select Denomination</option>
-              {denoms &&
-                denoms.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.denomination_of_coin}
-                  </option>
-                ))}
-            </select>
-            <select
-              name="coin_type"
-              className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-              {...register("coin_type", { valueAsNumber: true })}
-              onChange={(e) => handleSelectedCoinType(e)}
-              required
-            >
-              <option value="0">Select Coin Type</option>
-              {filteredCoinTypes &&
-                filteredCoinTypes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.coin_type}
-                  </option>
-                ))}
-            </select>
-            <select
-              name="strike"
-              className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
-              {...register("strike", { valueAsNumber: true })}
-              required
-            >
-              <option value="0">Select Coin Strike</option>
-              {getCoinStrikes &&
-                getCoinStrikes.map((strike) => (
-                  <option key={strike.id} value={strike.id}>
-                    {strike.strike}
-                  </option>
-                ))}
-            </select>
-          </div>
+        </div>
+        <div className="grid px-4 py-4">
+          <select
+            name="family_of_coin"
+            className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+            {...register("family_of_coin", { valueAsNumber: true })}
+            required
+            onChange={(e) => handleSelectedFamily(e)}
+          >
+            <option>Select Family</option>
+            {getFamily &&
+              getFamily.map((family) => (
+                <option key={family.id} id={family.id} value={family.id}>
+                  {family.type}
+                </option>
+              ))}
+          </select>
+          <select
+            name="denomination_of_coin"
+            className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+            {...register("denomination_of_coin", { valueAsNumber: true })}
+            required
+            onChange={(e) => handleSelectedDenom(e)}
+          >
+            <option value="0">Select Denomination</option>
+            {denoms &&
+              denoms.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.denomination_of_coin}
+                </option>
+              ))}
+          </select>
+          <select
+            name="coin_type"
+            className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+            {...register("coin_type", { valueAsNumber: true })}
+            onChange={(e) => handleSelectedCoinType(e)}
+            required
+          >
+            <option value="0">Select Coin Type</option>
+            {filteredCoinTypes &&
+              filteredCoinTypes.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.coin_type}
+                </option>
+              ))}
+          </select>
+          <select
+            name="strike"
+            className="p-2 border my-2 rounded focus:ring-2 focus:outline-none focus:ring-slate-300"
+            {...register("strike", { valueAsNumber: true })}
+            required
+          >
+            <option value="0">Select Coin Strike</option>
+            {getCoinStrikes &&
+              getCoinStrikes.map((strike) => (
+                <option key={strike.id} value={strike.id}>
+                  {strike.strike}
+                </option>
+              ))}
+          </select>
+        </div>
         <SubmitButton />
-        <button className="bg-gray-400 px-2 py m-2 rounded-lg text-white border border-gray-500 hover:cursor-pointer" type="button" onClick={() => navigate("/coins/inventory")}>
+        <button
+          className="bg-gray-400 px-2 py m-2 rounded-lg text-white border border-gray-500 hover:cursor-pointer"
+          type="button"
+          onClick={() => navigate("/coins/inventory")}
+        >
           Cancel
         </button>
       </form>

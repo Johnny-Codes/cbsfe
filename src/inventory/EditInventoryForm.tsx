@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-
+import SoftDeleteButton from "../components/buttons/SoftDeleteButton";
 // api queries
 import {
-  
   useUpdateCoinMutation,
   useGetMintsQuery,
   useGetFamilyQuery,
@@ -470,7 +469,10 @@ const EditInventoryForm = (props: any) => {
         >
           Cancel
         </button>
+        
       </form>
+      {coinData &&
+        <SoftDeleteButton id={coinData.id} />}
     </div>
   );
 };

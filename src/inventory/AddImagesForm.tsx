@@ -41,12 +41,7 @@ const AddImagesForm = (props: any) => {
 
   const [uploadImages] = useUploadImagesMutation();
 
-  console.log("images props", props.coinData);
-
   const onSubmit = (data) => {
-    console.log(props.coinData.id);
-    console.log(data);
-
     // Create a new FormData object
     const formData = new FormData();
 

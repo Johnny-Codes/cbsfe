@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+console.log("VITE_BASE_URL: ", import.meta.env.VITE_BASE_URL);
+
 export const coinApi = createApi({
   reducerPath: "coinApi",
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BASE_URL }),
@@ -18,6 +20,12 @@ export const coinApi = createApi({
         };
       },
       invalidatesTags: ["Coins"],
+    }),
+    getProductDescriptionText: builder.query({
+      query: (id) => `coins/${id}/textdesc`,
+    }),
+    getProductDescriptionImages: builder.query({
+      query: (id) => `coins/${id}/picdesc`,
     }),
     getCoinsByType: builder.query({
       query: (id) => `coins/cointypes/${id}/`,
@@ -85,11 +93,21 @@ export const coinApi = createApi({
       }),
       invalidatesTags: ["Images"],
     }),
+    getProductDescriptionFromText: builder.query({
+      query: (data) => {
+        return {
+          url: `coins/${data.id}/textdesc/`,
+          method: "GET",
+        };
+      }
+    })
   }),
 });
 
 export const {
   useGetCoinQuery,
+  useGetProductDescriptionImagesQuery,
+  useGetProductDescriptionTextQuery,
   useUpdateCoinMutation,
   useGetCoinsByTypeQuery,
   useGetSkuQuery,
@@ -105,4 +123,5 @@ export const {
   useUploadImagesMutation,
   useGetImageQuery,
   useDeleteImageMutation,
+  useGetProductDescriptionFromTextQuery,
 } = coinApi;

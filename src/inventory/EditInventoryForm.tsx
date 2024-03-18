@@ -144,14 +144,6 @@ const EditInventoryForm = (props: any) => {
     reset,
   } = useForm<Inputs>();
 
-//   useEffect(() => {
-//     if (!coinData.id) {
-//       navigate("/coins/inventory", {
-//         state: { coin_type: coinData.coin_type },
-//       });
-//     }
-//   }, [coinData, navigate]);
-
   useEffect(() => {
     if (coinData) {
       setValue("sku", coinData.sku);

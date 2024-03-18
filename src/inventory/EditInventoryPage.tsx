@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import EditInventoryForm from "./EditInventoryForm";
 import AddImagesForm from "./AddImagesForm";
 import { useGetCoinQuery } from "./queries/coinApi";
+import AddEditCoinDescription from "./AddEditCoinDescription";
 
 const EditInventoryPage = () => {
   const location = useLocation();
@@ -29,7 +30,7 @@ const EditInventoryPage = () => {
         <AddImagesForm coinData={coinData} />
       </div>
       <div className="md:col-span-2 lg:col-span-1">
-        <h1>This will be the description section</h1>
+        <AddEditCoinDescription coinData={coinData} />
       </div>
     </div>
   );

@@ -100,7 +100,15 @@ export const coinApi = createApi({
           method: "GET",
         };
       }
-    })
+    }),
+    getProductDescriptionFromPhotos: builder.query({
+      query: (data) => {
+        return {
+          url: `coins/${data.id}/picdesc/`,
+          method: "GET",
+        };
+      }
+    }),
   }),
 });
 
@@ -124,4 +132,5 @@ export const {
   useGetImageQuery,
   useDeleteImageMutation,
   useGetProductDescriptionFromTextQuery,
+  useGetProductDescriptionFromPhotosQuery,
 } = coinApi;

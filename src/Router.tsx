@@ -4,7 +4,8 @@ import HomePage from "./homepage/HomePage";
 import AddInventoryForm from "./inventory/AddInventoryForm";
 import InventoryPage from "./inventory/InventoryPage";
 import EditInventoryPage from "./inventory/EditInventoryPage";
-
+import AddCustomer from "./customers/AddCustomer";
+import CustomerList from "./customers/CustomerList";
 import Test from "./Test";
 
 function Router() {
@@ -19,7 +20,11 @@ function Router() {
           <Route path="add" element={<AddInventoryForm />} />
           <Route path="edit/:sku" element={<EditInventoryPage />} />
         </Route>
-        <Route path="/test" element={<Test />} />
+        <Route path="/customers">
+          <Route index element={<CustomerList />} />
+          <Route path="add" element={<AddCustomer />} />
+        </Route>
+        <Route path="/test" element={<CustomerList />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,43 +1,36 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const node = useRef(); // Add this line
-
-  const handleClick = e => {
-    if (node.current.contains(e.target)) {
-      // inside click
-      return;
-    }
-    // outside click 
-    setIsOpen(false);
-  };
-
-  useEffect(() => {
-    // add when mounted
-    document.addEventListener("mousedown", handleClick);
-    // return function to be called when unmounted
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-    };
-  }, []);
+  const [isInventoryOpen, setIsInventoryOpen] = useState(false);
+  const [isCustomerOpen, setIsCustomerOpen] = useState(false);
 
   return (
     <nav className="flex items-center justify-between bg-slate-500 p-6">
-      <div className="flex items-center text-white font-semibold text-xl tracking-tight space-x-4 relative" ref={node}>
-          <NavLink to="/" onClick={() => setIsOpen(false)}>coINventory</NavLink>
-          <div className="dropdown">
-            <p onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
+      <div className="flex items-center text-white font-semibold text-xl tracking-tight space-x-4 relative">
+          <NavLink to="/" onMouseOver={() => {setIsInventoryOpen(false); setIsCustomerOpen(false);}}>coINventory</NavLink>
+          <div className="inventory-dropdown" onMouseOver={() => setIsInventoryOpen(true)} onMouseLeave={() => setIsInventoryOpen(false)}>
+            <p className="cursor-pointer">
               Coins
             </p>
-            {isOpen && (
+            {isInventoryOpen && (
               <div className="flex flex-col w-full dropdown-content absolute bg-slate-500 rounded-lg p-2">
-                <NavLink to="/coins/inventory" onClick={() => setIsOpen(false)}>Inventory</NavLink>
-                <NavLink to="/coins/add" onClick={() => setIsOpen(false)}>Add Coin</NavLink>
+                <NavLink to="/coins/inventory" onMouseOver={() => setIsInventoryOpen(true)}>Inventory</NavLink>
+                <NavLink to="/coins/add" onMouseOver={() => setIsInventoryOpen(true)}>Add Coin</NavLink>
               </div>
             )}
           </div>
+          <div className="customer-dropdown" onMouseOver={() => setIsCustomerOpen(true)} onMouseLeave={() => setIsCustomerOpen(false)}>
+            <p className="cursor-pointer">
+              Customers
+            </p>
+            {isCustomerOpen && (
+              <div className="flex flex-col w-full dropdown-content absolute bg-slate-500 rounded-lg p-2">
+                <NavLink to="/customers" onMouseOver={() => setIsCustomerOpen(true)}>Customers</NavLink>
+                <NavLink to="#" onMouseOver={() => setIsCustomerOpen(true)}>Add Coin</NavLink>
+              </div>
+            )}
+            </div>
       </div>
     </nav>
   );

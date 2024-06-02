@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useGetCustomersQuery } from "../customers/queries/customersApi";
 
 const CustomerList = () => {
@@ -7,7 +8,6 @@ const CustomerList = () => {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-
   const filteredData = data.filter(
     (customer) =>
       customer.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,10 +46,10 @@ const CustomerList = () => {
                 {customer.email}
               </td>
               <td className="border border-gray-300 p-2 text-left">
-                {customer.business && customer.business.name}
+                {customer.business_name}
               </td>
               <td className="border border-gray-300 p-2 text-left">
-                View | Invoice | Edit
+                View | Invoice | <Link to={`/customers/edit/${customer.id}`} className="text-blue-500 underline">Edit</Link>
               </td>
             </tr>
           ))}

@@ -27,7 +27,7 @@ const NavBar = () => {
             {isCustomerOpen && (
               <div className="flex flex-col w-full dropdown-content absolute bg-slate-500 rounded-lg p-2">
                 <NavLink to="/customers" onMouseOver={() => setIsCustomerOpen(true)}>Customers</NavLink>
-                <NavLink to="#" onMouseOver={() => setIsCustomerOpen(true)}>Add Coin</NavLink>
+                <NavLink to="/customers/add" onMouseOver={() => setIsCustomerOpen(true)}>Add Customer</NavLink>
               </div>
             )}
             </div>

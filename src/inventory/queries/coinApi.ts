@@ -1,7 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-console.log("VITE_BASE_URL: ", import.meta.env.VITE_BASE_URL);
-
 export const coinApi = createApi({
   reducerPath: "coinApi",
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BASE_URL }),
@@ -54,6 +52,12 @@ export const coinApi = createApi({
     }),
     getCoinStrikes: builder.query({
       query: () => "coins/strike/",
+    }),
+    getAllSkus: builder.query({
+      query: () => "coins/skus/",
+    }),
+    getCoinInfoBySku: builder.query({
+      query: (sku) => `coins/skus/${sku}/`,
     }),
     addCoin: builder.mutation({
       query: (data) => ({
@@ -126,6 +130,8 @@ export const {
   useGetGradingCompaniesQuery,
   useGetCoinGradesQuery,
   useGetCoinStrikesQuery,
+  useGetAllSkusQuery,
+  useGetCoinInfoBySkuQuery,
   useAddCoinMutation,
   useGetPcgsCoinInfoMutation,
   useUploadImagesMutation,

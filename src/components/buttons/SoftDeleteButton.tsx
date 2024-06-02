@@ -7,9 +7,6 @@ const SoftDeleteButton = (props) => {
     const handleClick = () => {
         updateCoin({ id, data: { toggle_soft_delete: true } })
           .unwrap()
-          .then(() => {
-            console.log("soft delete coin: ", id);
-          })
           .catch((error) => {
             console.error("Failed to soft delete coin: ", error);
           });

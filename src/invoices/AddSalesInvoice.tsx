@@ -1,24 +1,53 @@
 import { useState } from "react";
-import {
-  useGetAllSkusQuery,
-  useGetCoinInfoBySkuQuery,
-} from "../inventory/queries/coinApi";
-
+import { useGetAllSkusQuery } from "../inventory/queries/coinApi";
+import { useCreateSalesInvoiceMutation } from "./queries/invoicesApi";
+import { useGetCustomersQuery } from "../customers/queries/customersApi";
 import { FaTrash } from "react-icons/fa";
-const AddInvoice = () => {
+import { set } from "react-hook-form";
+const AddSalesInvoice = () => {
   const {
     data: skuData,
     error: skuError,
     isLoading: skuLoading,
   } = useGetAllSkusQuery();
+  const {
+    data: customerData,
+    error: customerError,
+    isLoading: customerLoading,
+  } = useGetCustomersQuery();
+  const [createSalesInvoice, { isSuccess, isError }] =
+    useCreateSalesInvoiceMutation();
+  const [invoiceSubmitMessage, setInvoiceSubmitMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isInputActive, setInputActive] = useState(false);
   const [invoiceItems, setInvoiceItems] = useState([]);
-  if (skuLoading) return <div>Loading...</div>;
-  if (skuError) return <div>Error: {skuError.message}</div>;
+  const [customerSearchTerm, setCustomerSearchTerm] = useState("");
+  const [isCustomerInputActive, setCustomerInputActive] = useState(false);
+  const [customerSalesData, setCustomerSalesData] = useState(null);
+  const [notes, setNotes] = useState("");
+
+  if (customerLoading || skuLoading) return <div>Loading...</div>;
+  if (customerError || skuError)
+    return <div>Error: {customerError?.message || skuError?.message}</div>;
 
   const filteredSkus = skuData
-    .filter((sku) => sku.sku.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter(
+      (sku) =>
+        sku.sku && sku.sku.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, 5);
+  const filteredCustomers = customerData
+    .filter(
+      (customer) =>
+        (customer.first_name &&
+          customer.first_name
+            .toLowerCase()
+            .includes(customerSearchTerm.toLowerCase())) ||
+        (customer.last_name &&
+          customer.last_name
+            .toLowerCase()
+            .includes(customerSearchTerm.toLowerCase()))
+    )
     .slice(0, 5);
 
   const addSkuToInvoice = async (sku) => {
@@ -36,10 +65,10 @@ const AddInvoice = () => {
           ...invoiceItems,
           {
             sku: sku,
-            salesPrice: coinInfo[0].sale_price,
+            salesPrice: Number(coinInfo[0].sale_price),
             quantity: 1,
-            cost: coinInfo[0].cost,
-            inventoryQuantity: coinInfo[0].quantity,
+            cost: Number(coinInfo[0].cost),
+            inventoryQuantity: Number(coinInfo[0].quantity),
             title: coinInfo[0].title,
           },
         ],
@@ -58,20 +87,50 @@ const AddInvoice = () => {
 
   const updateInvoiceItem = (index, field, value) => {
     const newInvoiceItems = [...invoiceItems];
-    newInvoiceItems[index][field] = value;
+    newInvoiceItems[index][field] =
+      field === "quantity" || field === "salesPrice" ? Number(value) : value;
     setInvoiceItems(newInvoiceItems);
   };
 
   const handleSubmitInvoice = () => {
-    // gotta add a dummy customer for now
-    // and see if we can get this to submit and work
-    // id = 4
-    const customerId = 4;
-    console.log(invoiceItems);
-  }
+    if (!invoiceItems || !customerSalesData) {
+      setInvoiceSubmitMessage("Please fill out all fields");
+      return;
+    }
+    if (invoiceItems.length === 0) {
+      setInvoiceSubmitMessage("Please add at least one item to invoice");
+      return;
+    }
+    const date = new Date().toUTCString();
+    const invoice = {
+      customer: customerSalesData.id,
+      notes: notes,
+      skus: invoiceItems,
+      date: date,
+    };
+
+    console.log(invoice);
+    createSalesInvoice(invoice)
+      .unwrap()
+      .then((payload) => {
+        console.log("Success!");
+        setInvoiceItems([]);
+        setCustomerSalesData(null);
+        setInvoiceSubmitMessage("Invoice Submitted");
+      })
+      .catch((error) => {
+        setInvoiceSubmitMessage("Invoice Submission Failed");
+      });
+    console.log(invoiceSubmitMessage);
+  };
 
   return (
     <div className="container mx-auto px-4">
+      <div className="flex justify-center items-center mb-4">
+      <h1 className="text-2xl font-bold">
+        {invoiceSubmitMessage && invoiceSubmitMessage}
+      </h1>
+    </div>
       <div className="grid grid-cols-6 gap-4">
         <div className="col-span-1">
           <form
@@ -79,7 +138,7 @@ const AddInvoice = () => {
             onSubmit={(e) => e.preventDefault()}
           >
             <div className="mb-4">
-                Search Skus
+              Search Skus
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="text"
@@ -113,7 +172,47 @@ const AddInvoice = () => {
             onSubmit={(e) => e.preventDefault()}
           >
             Search Customers
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="text"
+              placeholder="Search..."
+              value={customerSearchTerm}
+              onChange={(e) => setCustomerSearchTerm(e.target.value)}
+              onFocus={() => setCustomerInputActive(true)}
+              onBlur={() =>
+                setTimeout(() => setCustomerInputActive(false), 200)
+              }
+            />
+            {isCustomerInputActive && (
+              <div className="absolute mt-2 bg-white border border-gray-200 rounded shadow-lg z-10">
+                {filteredCustomers.map((customer, index) => (
+                  <div
+                    key={index}
+                    value={customer.id}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setCustomerSearchTerm("");
+                      // Add the selected customer to the invoice
+                      // You need to implement this function
+                      setCustomerSalesData(customer);
+                    }}
+                  >
+                    {customer.last_name}, {customer.first_name}
+                    <hr />
+                  </div>
+                ))}
+              </div>
+            )}
           </form>
+
+          {customerSalesData && (
+            <div>
+              <h1>Sales Order For:</h1>
+              <p>
+                {customerSalesData.last_name}, {customerSalesData.first_name}
+              </p>
+            </div>
+          )}
         </div>
         <div className="col-span-5">
           <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -180,7 +279,11 @@ const AddInvoice = () => {
                       : "text-red-600"
                   }`}
                 >
-                  {item.quantity * (item.salesPrice - item.cost)}
+                  ${item.quantity * (item.salesPrice - item.cost)} | $
+                  {(((item.salesPrice - item.cost) / item.cost) * 100).toFixed(
+                    2
+                  )}
+                  %
                 </div>
                 <button
                   className="col-span-1 text-red-500 font-bold py-2 px-4 rounded"
@@ -223,11 +326,45 @@ const AddInvoice = () => {
                           item.quantity,
                       0
                     )
+                  ).toFixed(2)}{" "}
+                  |{" "}
+                  {Number(
+                    ((invoiceItems.reduce(
+                      (sum, item) =>
+                        sum + Number(item.salesPrice) * item.quantity,
+                      0
+                    ) -
+                      invoiceItems.reduce(
+                        (sum, item) => sum + Number(item.cost) * item.quantity,
+                        0
+                      )) /
+                      invoiceItems.reduce(
+                        (sum, item) => sum + Number(item.cost) * item.quantity,
+                        0
+                      )) *
+                      100
                   ).toFixed(2)}
+                  %
                 </div>
-                <div className="col-span-1"><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSubmitInvoice}>Submit</button></div>
+                <div className="col-span-1">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleSubmitInvoice}
+                  >
+                    Submit
+                  </button>
+                </div>
               </div>
             )}
+            <div>
+              <textarea
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                name="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Notes..."
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -235,4 +372,4 @@ const AddInvoice = () => {
   );
 };
 
-export default AddInvoice;
+export default AddSalesInvoice;

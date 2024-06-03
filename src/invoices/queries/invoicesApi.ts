@@ -5,9 +5,9 @@ export const invoicesApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BASE_URL }),
   tagTypes: ["Invoice"],
   endpoints: (builder) => ({
-    createInvoice: builder.mutation({
+    createSalesInvoice: builder.mutation({
       query: (data) => ({
-        url: "invoices/",
+        url: "sales/invoice/",
         method: "POST",
         body: data,
       }),
@@ -17,5 +17,5 @@ export const invoicesApi = createApi({
 });
 
 export const {
-  useCreateInvoiceMutation,
+  useCreateSalesInvoiceMutation,
 } = invoicesApi;

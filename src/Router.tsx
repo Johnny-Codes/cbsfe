@@ -7,7 +7,7 @@ import EditInventoryPage from "./inventory/EditInventoryPage";
 import AddCustomer from "./customers/AddCustomer";
 import CustomerList from "./customers/CustomerList";
 import EditCustomer from "./customers/EditCustomer";
-import AddInvoice from "./invoices/AddInvoice";
+import AddSalesInvoice from "./invoices/AddSalesInvoice";
 import Test from "./Test";
 
 function Router() {
@@ -26,8 +26,9 @@ function Router() {
           <Route index element={<CustomerList />} />
           <Route path="add" element={<AddCustomer />} />
           <Route path="edit/:id" element={<EditCustomer />} />
+          <Route path="sales-order" element={<AddSalesInvoice />} />
         </Route>
-        <Route path="/test" element={<AddInvoice />} />
+        <Route path="/test" element={<AddSalesInvoice />} />
       </Routes>
     </BrowserRouter>
   );

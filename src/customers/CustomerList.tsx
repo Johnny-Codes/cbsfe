@@ -37,6 +37,7 @@ const CustomerList = () => {
           {filteredData.map((customer, index) => (
             <tr
               key={customer.id}
+              id={customer.id}
               className={index % 2 === 0 ? "bg-gray-200" : "bg-white"}
             >
               <td className="border border-gray-300 p-2 text-left">

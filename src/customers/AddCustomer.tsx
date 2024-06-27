@@ -24,27 +24,72 @@ const AddCustomer = () => {
   const [createCustomer, { isSuccess, isError }] = useCreateCustomerMutation();
   const { data: businessData, error, isLoading } = useGetBusinessesQuery();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showFailure, setShowFailure] = useState(false);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
   const onSubmit = (data) => {
-    createCustomer(data).unwrap().then(() => {
-      if (isSuccess) {
+    createCustomer(data)
+      .unwrap()
+      .then(() => {
+        console.log("Customer creation successful");
         setShowSuccess(true);
         reset();
-      }
-    });
+      })
+      .catch((error) => {
+        setShowFailure(true);
+      });
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      {showSuccess && <div>Customer created successfully!</div>}
-      
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="p-4 bg-white shadow-md rounded-md"
       >
+        {showSuccess && (
+          <div className="bg-green-500 text-white p-4 rounded-lg shadow-md my-4 flex items-center">
+            <button
+              onClick={() => setShowSuccess(false)}
+              className="flex items-center focus:outline-none"
+            >
+              <svg
+                className="w-6 h-6 mr-2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M5 13l4 4L19 7"></path>
+              </svg>
+            </button>
+            Customer created successfully!
+          </div>
+        )}
+        {showFailure && (
+          <div className="bg-red-500 text-white p-4 rounded-lg shadow-md my-4 flex items-center">
+            <button
+              onClick={() => setShowFailure(false)}
+              className="flex items-center focus:outline-none"
+            >
+              <svg
+                className="w-6 h-6 mr-2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+            Customer not created!
+          </div>
+        )}
         <div className="space-y-4">
           <div className="flex space-x-4">
             <InputField
